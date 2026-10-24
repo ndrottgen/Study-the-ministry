@@ -43,6 +43,25 @@
 
 .rows a { color: var(--ink); }
 
+.sync { margin-top: 10px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; }
+.sync summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px; padding: 10px 14px; min-height: 44px; font-weight: 700; font-size: 15px; }
+.sync summary::-webkit-details-marker { display: none; }
+.sync summary::after { content: ""; flex: none; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin: -3px 2px 0 0; }
+.sync[open] summary::after { transform: rotate(-135deg); margin-top: 3px; }
+.syncstate { margin-left: auto; font-size: 13px; font-weight: 600; color: var(--muted); text-align: right; }
+.syncstate.on { color: var(--study); }
+.syncbody { border-top: 1px solid var(--rule); padding: 14px; display: grid; gap: 18px; }
+.syncpart { display: grid; gap: 10px; min-width: 0; }
+.syncpart + .syncpart { border-top: 1px solid var(--rule); padding-top: 16px; }
+.syncpart h4 { margin: 0; font-family: var(--font-display); font-size: 19px; font-weight: 600; }
+.syncpart p { margin: 0; }
+.syncpart .note { margin: 0; font-size: 13px; }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 15px; }
+.syncmsg { font-size: 14px; font-weight: 600; color: var(--study); }
+.syncmsg:empty { display: none; }
+.syncmsg.err { color: var(--pen); }
+.syncpart textarea { font-size: 14px; word-break: break-all; }
+
 .clist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 560px) { .clist { grid-template-columns: 1fr; } }
 .clist .card h4 { font-size: 17px; }
@@ -121,7 +140,39 @@
         <span class="copied" id="copied" hidden></span>
       </div>
     </div>
-    <p class="note">Notes stay in this browser on this device.</p>
+    <details class="sync" id="sync">
+      <summary><span>Sync across devices</span><span class="syncstate" id="syncState">This device only</span></summary>
+      <div class="syncbody">
+        <div class="syncpart">
+          <h4>GitHub sync</h4>
+          <p class="muted">Keeps your notes and checklist in a private gist on your GitHub. Every device you connect stays up to date on its own.</p>
+          <div id="ghOff">
+            <ol class="steps">
+              <li><a href="https://github.com/settings/tokens/new?scopes=gist&amp;description=Lord%E2%80%99s%20Day%20notes" target="_blank" rel="noopener">Create a GitHub key</a> (GitHub calls it a personal access token) with only the <b>gist</b> box checked, then copy it.</li>
+              <li>Paste it here and connect. Do this once on each device.</li>
+            </ol>
+            <div class="field" style="margin-top:10px"><label for="ghToken">GitHub key</label><input id="ghToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ghp_…"></div>
+            <div class="brow" style="margin-top:10px"><button type="button" class="btn primary" id="ghConnect">Connect</button></div>
+          </div>
+          <div class="brow" id="ghOn" hidden>
+            <button type="button" class="btn" id="ghSyncNow">Sync now</button>
+            <button type="button" class="btn" id="ghDisconnect">Disconnect this device</button>
+          </div>
+          <p class="syncmsg" id="ghMsg" aria-live="polite"></p>
+          <p class="note">The key stays in this browser and can only read and write your gists. You can delete it on GitHub anytime. When it expires, make a new one and connect again.</p>
+        </div>
+        <div class="syncpart">
+          <h4>Sync code</h4>
+          <p class="muted">No setup. Copy a code here, then paste it on your other device. For each day, the newer note wins, so nothing newer gets overwritten.</p>
+          <div class="brow"><button type="button" class="btn" id="codeCopy">Copy sync code</button></div>
+          <div class="field" id="codeOutWrap" hidden><label for="codeOut">Your sync code</label><textarea id="codeOut" rows="3" readonly></textarea></div>
+          <div class="field"><label for="codeIn">Paste a code from your other device</label><textarea id="codeIn" rows="3" autocapitalize="off" spellcheck="false"></textarea></div>
+          <div class="brow"><button type="button" class="btn primary" id="codeApply">Bring in notes</button></div>
+          <p class="syncmsg" id="codeMsg" aria-live="polite"></p>
+        </div>
+      </div>
+    </details>
+    <p class="note">Notes save in this browser as you type. To use them on another device, sync them above.</p>
     <p class="note"><b>Come to the Lord fresh.</b> You can’t rely on yesterday’s revelation, even for the same words. Prayer comes first, then the speaking.</p>
   </section>
 
@@ -191,17 +242,71 @@
 <script>
 (function () {
   "use strict";
-  var NKEY = "stm-lordsday-notes-v1", CKEY = "stm-lordsday-checks-v1";
+  var K = { notes: "stm-lordsday-notes-v1", checks: "stm-lordsday-checks-v1", meta: "stm-lordsday-meta-v1", gh: "stm-lordsday-github-v1" };
+  var FILE = "lords-day-notes.json", API = "https://api.github.com";
   var NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   var $ = function (id) { return document.getElementById(id); };
+  function readJSON(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || "null"); return v == null ? d : v; } catch (e) { return d; } }
+  function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
   var days = Array.prototype.slice.call(document.querySelectorAll("#harvest .hday"));
   var notes = days.map(function (d) { return d.querySelector("textarea"); });
   var stack = Array.prototype.slice.call(document.querySelectorAll("#stack .chip"));
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("#clist input[type=checkbox]"));
 
-  try {
-    var saved = JSON.parse(localStorage.getItem(NKEY) || "null");
-    if (Array.isArray(saved)) notes.forEach(function (t, i) { t.value = typeof saved[i] === "string" ? saved[i] : ""; });
-  } catch (e) {}
+  // Load what this browser has. Each note and each checkbox carries the time it last changed,
+  // so syncing can keep the newer one for each day instead of overwriting a whole week.
+  var savedNotes = readJSON(K.notes, []), savedChecks = readJSON(K.checks, {}), meta = readJSON(K.meta, {});
+  if (!Array.isArray(savedNotes)) savedNotes = [];
+  if (!savedChecks || typeof savedChecks !== "object") savedChecks = {};
+  if (!meta || typeof meta !== "object") meta = {};
+  var notesAt = [], checksAt = {};
+  notes.forEach(function (t, i) {
+    t.value = typeof savedNotes[i] === "string" ? savedNotes[i] : "";
+    notesAt[i] = (meta.notesAt && +meta.notesAt[i]) || (t.value ? 1 : 0);
+  });
+  boxes.forEach(function (b) {
+    b.checked = !!savedChecks[b.id];
+    checksAt[b.id] = (meta.checksAt && +meta.checksAt[b.id]) || (b.checked ? 1 : 0);
+  });
+
+  function checksObj() { var c = {}; boxes.forEach(function (b) { c[b.id] = b.checked; }); return c; }
+  function persist() {
+    writeJSON(K.notes, notes.map(function (t) { return t.value; }));
+    writeJSON(K.checks, checksObj());
+    writeJSON(K.meta, { notesAt: notesAt, checksAt: checksAt });
+  }
+  function snapshot() {
+    return { v: 1, notes: notes.map(function (t) { return t.value; }), notesAt: notesAt.slice(), checks: checksObj(), checksAt: Object.assign({}, checksAt) };
+  }
+  // The other copy wins if it changed more recently; on a tie, a filled-in value beats an empty one.
+  function wins(mine, myTs, theirs, theirTs) {
+    if (theirTs !== myTs) return theirTs > myTs;
+    return !mine && !!theirs;
+  }
+  function mergeIn(o) {
+    o = o && typeof o === "object" ? o : {};
+    var on = Array.isArray(o.notes) ? o.notes : [], ot = Array.isArray(o.notesAt) ? o.notesAt : [];
+    var oc = o.checks && typeof o.checks === "object" ? o.checks : {}, oct = o.checksAt && typeof o.checksAt === "object" ? o.checksAt : {};
+    var r = { notes: 0, checks: 0, behind: false };
+    notes.forEach(function (t, i) {
+      var tv = typeof on[i] === "string" ? on[i] : "", tt = +ot[i] || 0;
+      if (wins(t.value, notesAt[i], tv, tt)) {
+        if (t.value !== tv) { t.value = tv; r.notes++; }
+        notesAt[i] = tt;
+      } else if (t.value !== tv || notesAt[i] !== tt) r.behind = true;
+    });
+    boxes.forEach(function (b) {
+      var tv = !!oc[b.id], tt = +oct[b.id] || 0, mt = checksAt[b.id] || 0;
+      if (wins(b.checked, mt, tv, tt)) {
+        if (b.checked !== tv) { b.checked = tv; r.checks++; }
+        checksAt[b.id] = tt;
+      } else if (b.checked !== tv || mt !== tt) r.behind = true;
+    });
+    if (r.notes || r.checks) { tally(); progress(); }
+    persist();
+    return r;
+  }
 
   // Mark today's card (Monday to Saturday).
   var wd = new Date().getDay();
@@ -220,12 +325,11 @@
     stack.forEach(function (c, i) { c.classList.toggle("on", i < n); });
     $("count").textContent = n + " of 6 mornings";
   }
-  function saveNotes() {
-    try { localStorage.setItem(NKEY, JSON.stringify(notes.map(function (t) { return t.value; }))); } catch (e) {}
-  }
-  function say(msg) { $("copied").textContent = msg; $("copied").hidden = false; }
+  function say(text) { $("copied").textContent = text; $("copied").hidden = false; }
 
-  notes.forEach(function (t) { t.addEventListener("input", function () { $("copied").hidden = true; tally(); saveNotes(); }); });
+  notes.forEach(function (t, i) {
+    t.addEventListener("input", function () { $("copied").hidden = true; notesAt[i] = Date.now(); tally(); persist(); soon(); });
+  });
 
   $("copyNotes").addEventListener("click", function () {
     var text = notes.map(function (t, i) { var v = t.value.trim(); return v ? NAMES[i] + ": " + v : ""; }).filter(Boolean).join("\n\n");
@@ -244,28 +348,185 @@
       return;
     }
     clearTimeout(armed); armed = null; nw.textContent = "Start a new week";
-    notes.forEach(function (t) { t.value = ""; });
-    tally(); saveNotes(); say("Cleared for a new week.");
+    var now = Date.now();
+    notes.forEach(function (t, i) { t.value = ""; notesAt[i] = now; });
+    tally(); persist(); soon(); say("Cleared for a new week.");
   });
 
   // Checklist
-  var boxes = Array.prototype.slice.call(document.querySelectorAll("#clist input[type=checkbox]"));
-  try {
-    var cs = JSON.parse(localStorage.getItem(CKEY) || "null");
-    if (cs && typeof cs === "object") boxes.forEach(function (b) { b.checked = !!cs[b.id]; });
-  } catch (e) {}
   function progress() {
     var n = boxes.filter(function (b) { return b.checked; }).length;
     $("progress").textContent = n + " of " + boxes.length + " ready.";
   }
-  function saveChecks() {
-    var o = {}; boxes.forEach(function (b) { o[b.id] = b.checked; });
-    try { localStorage.setItem(CKEY, JSON.stringify(o)); } catch (e) {}
-  }
-  boxes.forEach(function (b) { b.addEventListener("change", function () { progress(); saveChecks(); }); });
-  $("resetChecks").addEventListener("click", function () { boxes.forEach(function (b) { b.checked = false; }); progress(); saveChecks(); });
+  boxes.forEach(function (b) {
+    b.addEventListener("change", function () { checksAt[b.id] = Date.now(); progress(); persist(); soon(); });
+  });
+  $("resetChecks").addEventListener("click", function () {
+    var now = Date.now();
+    boxes.forEach(function (b) { b.checked = false; checksAt[b.id] = now; });
+    progress(); persist(); soon();
+  });
 
-  tally(); progress();
+  function msg(id, text, err) { var el = $(id); el.textContent = text || ""; el.classList.toggle("err", !!err); }
+
+  // GitHub sync: a private gist holds one JSON file with the notes, checklist, and their timestamps.
+  var gh = readJSON(K.gh, null);
+  if (!gh || !gh.token || !gh.gist) gh = null;
+  var busy = false, again = false, timer = null, lastSynced = "";
+
+  function ghFetch(token, path, opt) {
+    opt = opt || {};
+    var h = { "Accept": "application/vnd.github+json", "Authorization": "Bearer " + token };
+    if (opt.body) h["Content-Type"] = "application/json";
+    return fetch(API + path, { method: opt.method || "GET", headers: h, body: opt.body, cache: "no-store" }).then(function (r) {
+      if (!r.ok) { var e = new Error("GitHub " + r.status); e.status = r.status; throw e; }
+      return r.json();
+    });
+  }
+  function fileBody() { var f = {}; f[FILE] = { content: JSON.stringify(snapshot()) }; return f; }
+  function findOrCreate(token) {
+    function page(n) {
+      return ghFetch(token, "/gists?per_page=100&page=" + n).then(function (list) {
+        for (var i = 0; i < list.length; i++) if (list[i].files && list[i].files[FILE]) return list[i].id;
+        return list.length === 100 && n < 5 ? page(n + 1) : null;
+      });
+    }
+    return page(1).then(function (id) {
+      if (id) return id;
+      return ghFetch(token, "/gists", { method: "POST", body: JSON.stringify({ description: "Studying the Ministry · Lord’s Day notes", public: false, files: fileBody() }) })
+        .then(function (g) { return g.id; });
+    });
+  }
+  function readGist(g) {
+    return ghFetch(g.token, "/gists/" + g.gist).then(function (res) {
+      var f = res.files && res.files[FILE];
+      if (!f) return {};
+      try { return JSON.parse(f.content || "{}"); } catch (e) { return {}; }
+    });
+  }
+  function writeGist(g) {
+    return ghFetch(g.token, "/gists/" + g.gist, { method: "PATCH", body: JSON.stringify({ files: fileBody() }) });
+  }
+
+  function setState() {
+    var s = $("syncState");
+    $("ghOff").hidden = !!gh;
+    $("ghOn").hidden = !gh;
+    if (!gh) { s.textContent = "This device only"; s.className = "syncstate"; return; }
+    s.className = "syncstate on";
+    s.textContent = busy ? "Syncing…" : lastSynced ? "Synced " + lastSynced : "GitHub connected";
+  }
+  function clock() { return new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }
+  function soon() { if (!gh) return; clearTimeout(timer); timer = setTimeout(sync, 1200); }
+  function disconnect() {
+    gh = null; lastSynced = ""; clearTimeout(timer); timer = null;
+    try { localStorage.removeItem(K.gh); } catch (e) {}
+    setState();
+  }
+
+  function sync() {
+    clearTimeout(timer); timer = null;
+    if (!gh) return Promise.resolve();
+    if (busy) { again = true; return Promise.resolve(); }
+    if (navigator.onLine === false) { msg("ghMsg", "Offline. Your notes are saved here and will sync when you’re back online."); return Promise.resolve(); }
+    busy = true; setState();
+    var g = gh;
+    return readGist(g).then(function (remote) {
+      var r = mergeIn(remote);
+      return r.behind ? writeGist(g) : null;
+    }).then(function () {
+      lastSynced = clock();
+      if ($("ghMsg").classList.contains("err") || /^Offline/.test($("ghMsg").textContent)) msg("ghMsg", "");
+    }, function (e) {
+      if (e.status === 401) {
+        disconnect();
+        msg("ghMsg", "GitHub didn’t accept the key. It may have expired or been deleted. Make a new one and connect again.", true);
+      } else if (e.status === 404) {
+        // The gist was deleted on GitHub; make a fresh one with what this device has.
+        disconnect();
+        return link(g.token);
+      } else {
+        msg("ghMsg", "Couldn’t reach GitHub just now. Your notes are saved here and will sync next time.", true);
+      }
+    }).then(function () {
+      busy = false; setState();
+      if (again) { again = false; sync(); }
+    });
+  }
+
+  function link(token) {
+    $("ghConnect").disabled = true;
+    msg("ghMsg", "Connecting…");
+    return findOrCreate(token).then(function (id) {
+      gh = { token: token, gist: id };
+      writeJSON(K.gh, gh);
+      $("ghToken").value = "";
+      msg("ghMsg", "Connected. This device now syncs on its own.");
+      setState();
+      busy = false;
+      return sync();
+    }, function (e) {
+      msg("ghMsg", e.status === 401 || e.status === 403
+        ? "GitHub didn’t accept that key. Make sure the gist box was checked when you created it."
+        : "Couldn’t reach GitHub. Check your connection and try again.", true);
+    }).then(function () { $("ghConnect").disabled = false; });
+  }
+
+  $("ghConnect").addEventListener("click", function () {
+    var t = $("ghToken").value.trim();
+    if (!t) { msg("ghMsg", "Paste your GitHub key first.", true); $("ghToken").focus(); return; }
+    link(t);
+  });
+  $("ghSyncNow").addEventListener("click", function () { sync(); });
+  $("ghDisconnect").addEventListener("click", function () {
+    disconnect();
+    msg("ghMsg", "This device is disconnected. Your notes stay here.");
+  });
+  document.addEventListener("visibilitychange", function () {
+    if (!gh) return;
+    if (document.visibilityState === "visible") sync();
+    else if (timer) sync();
+  });
+  window.addEventListener("online", function () { sync(); });
+
+  // Sync code: the same JSON, packed into one line to copy and paste between devices.
+  function toCode() {
+    var bytes = new TextEncoder().encode(JSON.stringify(snapshot())), bin = "";
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return "LDN1." + btoa(bin);
+  }
+  function fromCode(s) {
+    s = s.replace(/\s+/g, "");
+    if (s.indexOf("LDN1.") !== 0) throw new Error("not a sync code");
+    var bin = atob(s.slice(5)), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    var o = JSON.parse(new TextDecoder().decode(bytes));
+    if (!o || o.v !== 1) throw new Error("unknown version");
+    return o;
+  }
+  $("codeCopy").addEventListener("click", function () {
+    var code = toCode();
+    $("codeOut").value = code;
+    function showIt() { $("codeOutWrap").hidden = false; msg("codeMsg", "Select the code below and copy it."); }
+    try {
+      navigator.clipboard.writeText(code).then(function () { msg("codeMsg", "Copied. Paste it on your other device."); }, showIt);
+    } catch (e) { showIt(); }
+  });
+  $("codeApply").addEventListener("click", function () {
+    var raw = $("codeIn").value.trim();
+    if (!raw) { msg("codeMsg", "Paste a sync code first.", true); return; }
+    var o;
+    try { o = fromCode(raw); } catch (e) { msg("codeMsg", "That doesn’t look like a sync code from this page.", true); return; }
+    var r = mergeIn(o), parts = [];
+    $("codeIn").value = "";
+    if (r.notes) parts.push(r.notes + (r.notes === 1 ? " note" : " notes"));
+    if (r.checks) parts.push(r.checks + (r.checks === 1 ? " checklist item" : " checklist items"));
+    msg("codeMsg", parts.length ? "Brought in " + parts.join(" and ") + "." : "Nothing newer in that code. You’re up to date.");
+    soon();
+  });
+
+  tally(); progress(); persist(); setState();
+  if (gh) sync();
 })();
 </script>
 </body>
