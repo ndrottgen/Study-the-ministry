@@ -1,11 +1,11 @@
 # Studying the Ministry
 
-A one-page study companion for class study, built from the training's study guidelines and study fellowship notes.
+A small study companion site for class study, built from the training's study guidelines and study fellowship notes.
 
-- **Timer:** a 60- or 90-minute study block that walks through each step (prepare, pray-read, survey, review, active reading, review, crystallize, bird's-eye) with what to do and what to ask.
-- **Marking key:** what to highlight in yellow, blue, and pink, plus pen marks (underline, double underline, box, circle, bracket, numbers, ?, →), with a practice page.
-- **Question bank:** questions to find the burden and crucial points before, during, and after reading.
-- **Capture:** whittling a study down to one key statement, building a bird's-eye view week by week, and a memorization schedule.
+- **Study Block** (`index.html`): a 60- or 90-minute study timer that walks through each step, a marking key for highlighting and annotating, a question bank for finding the burden, and ways to capture what you saw.
+- **Class Notes** (`class-notes.html`): how to set up a note page, what to listen for, the five minutes after class, and turning notes into understanding later that day.
+- **Outlines** (`outlines.html`): finding the governing thought, following the flow of the Roman numerals, connecting points to verses, sorting by importance, and a weekly outline rhythm.
+- **Prophecy** (`prophecy.html`): the three ingredients of a prophecy, preparing through the week, a builder with a three-minute estimate, practice, delivery, and a checklist.
 
 ## Use it
 

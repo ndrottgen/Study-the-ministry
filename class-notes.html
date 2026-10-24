@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Taking Notes in Class</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+/* Note page mock: a sheet with labeled zones in the order you fill them. */
+.sheetmock { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 12px; }
+.zone { border: 1.5px dashed var(--rule); border-radius: 8px; padding: 10px 12px; min-width: 0; }
+.zone b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 6px; }
+.zone .hand { font-family: var(--font-hand); color: var(--pen); font-size: 20px; line-height: 1.15; }
+.zone .lines { display: grid; gap: 8px; margin-top: 4px; }
+.zone .lines span { border-bottom: 1px solid var(--rule); padding-bottom: 4px; font-family: var(--font-display); font-size: 16px; color: var(--muted); min-height: 24px; }
+.z-burden { grid-column: 1 / -1; border-color: var(--scribal); }
+.z-flow { grid-row: span 2; }
+.z-saw { grid-column: 1 / -1; }
+.rightcol { display: grid; gap: 12px; align-content: start; }
+@media (max-width: 520px) { .sheetmock { grid-template-columns: 1fr; } .z-flow { grid-row: auto; } }
+
+.vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 12px; }
+.vs .card:first-child { opacity: .85; }
+.vs .card:first-child h4 { color: var(--muted); }
+@media (max-width: 520px) { .vs { grid-template-columns: 1fr; } }
+
+.bar3 { display: flex; height: 40px; border-radius: 8px; overflow: hidden; border: 1px solid var(--rule); }
+.bar3 div { display: flex; align-items: center; padding: 0 10px; font-size: 13px; font-weight: 700; color: var(--ink); min-width: 0; white-space: nowrap; overflow: hidden; }
+.bar3 .a { flex: 70; background: var(--hl-y); }
+.bar3 .b { flex: 20; background: var(--hl-b); }
+.bar3 .c { flex: 10; background: var(--hl-p); justify-content: center; padding: 0; }
+.barkey { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; font-size: 14px; }
+.barkey b { display: block; }
+.barkey span { color: var(--muted); }
+@media (max-width: 520px) { .barkey { grid-template-columns: 1fr; } }
+
+.marklist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.marklist div { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 12px; display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: baseline; }
+.marklist .g { font-family: var(--font-hand); color: var(--pen); font-size: 28px; font-weight: 700; line-height: 1; text-align: center; }
+@media (max-width: 520px) { .marklist { grid-template-columns: 1fr; } }
+
+.example { margin-top: 10px; font-family: var(--font-display); font-style: italic; font-size: 16px; color: var(--muted); border-left: 2px solid var(--rule); padding-left: 10px; }
+
+.later { list-style: none; margin: 0; padding: 0; counter-reset: s; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.later li { counter-increment: s; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; padding: 14px 0; border-bottom: 1px solid var(--rule); }
+.later li::before { content: counter(s); display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--sheet); font-weight: 700; font-size: 13px; }
+.later b { display: block; }
+.later span { color: var(--muted); font-size: 15px; }
+.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.tiers div { border-radius: 8px; padding: 8px 10px; font-size: 14px; border: 1px solid var(--rule); background: var(--paper); }
+.tiers b { font-size: 14px; }
+.tiers div:first-child { border-color: var(--ink); }
+@media (max-width: 520px) { .tiers { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="site-nav" aria-label="Site">
+    <a class="brand" href="index.html">Studying the Ministry</a>
+    <ul>
+      <li><a href="index.html">Study Block</a></li>
+      <li><a href="class-notes.html" aria-current="page">Class Notes</a></li>
+      <li><a href="outlines.html">Outlines</a></li>
+      <li><a href="prophecy.html">Prophecy</a></li>
+    </ul>
+  </nav>
+
+  <header>
+    <h1>Taking Notes in Class</h1>
+    <p class="lede">Notes keep your being engaged and your mind active in class. They don’t need to be word for word, only enough to bring back the main points and the burden.</p>
+    <nav class="jump" aria-label="Sections">
+      <a href="#setup">Set up the page</a>
+      <a href="#listen">While listening</a>
+      <a href="#after">After class</a>
+      <a href="#later">Later that day</a>
+      <a href="#use">Using your notes</a>
+    </nav>
+  </header>
+
+  <section id="setup">
+    <h2>Set up the page</h2>
+    <p class="section-lede">Give the burden a place at the top before the brother starts. Fill it in during or after class.</p>
+    <div class="sheetmock" aria-label="Example layout of a class note page">
+      <div class="zone z-burden"><b>Burden</b><span class="hand">One sentence. Leave space and fill it in during or after class.</span></div>
+      <div class="zone z-flow"><b>Flow</b>
+        <div class="lines"><span>I.</span><span>II.</span><span>III.</span><span>IV.</span></div>
+      </div>
+      <div class="rightcol">
+        <div class="zone"><b>Key statements</b><div class="lines"><span><span class="star">★</span></span><span><span class="star">★</span></span></div></div>
+        <div class="zone"><b>Verses</b><div class="lines"><span>•</span><span>•</span></div></div>
+      </div>
+      <div class="zone z-saw"><b>What I saw</b><span class="hand">Not what was taught, but what you saw.</span></div>
+    </div>
+    <p class="note"><b>Stay in your spirit while you listen.</b> Ask the Lord how best to take notes, and exercise your spirit as well as your mind.</p>
+  </section>
+
+  <section id="listen">
+    <h2>While listening</h2>
+    <p class="section-lede">A whole class can often be reduced to one governing burden. If you miss it, you can have pages of notes and still miss the class.</p>
+
+    <div class="vs">
+      <div class="card"><h4>Not only</h4><p>What is he saying?</p></div>
+      <div class="card"><h4>But</h4>
+        <ul class="qlist">
+          <li>Why is he saying it?</li>
+          <li>What burden is behind this point?</li>
+          <li>What does he want us to see?</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Where your page goes</h3>
+    <div class="bar3" aria-hidden="true"><div class="a">Burden and flow</div><div class="b">Support</div><div class="c">“ ”</div></div>
+    <div class="barkey">
+      <div><b>About 70%: burden and flow</b><span>Trace the movement from point to point, not every sentence.</span></div>
+      <div><b>About 20%: supporting points</b><span>Verses, definitions, illustrations that clarify the burden.</span></div>
+      <div><b>About 10%: word for word</b><span>Only statements worth keeping exactly.</span></div>
+    </div>
+    <p class="note"><b>Write word for word only when a statement</b> sums up a truth, carries the burden, or is one you could build a prophecy on. Otherwise put it in your own words.</p>
+
+    <h3>Mark as you go</h3>
+    <div class="marklist">
+      <div><span class="g">★</span><span><b>Key statement</b><br><span class="muted">A sentence you don’t want to forget.</span></span></div>
+      <div><span class="g">!</span><span><b>Burden</b><br><span class="muted">Where the brother presses the main point.</span></span></div>
+      <div><span class="g">→</span><span><b>Turn</b><br><span class="muted">A major shift in the speaking.</span></span></div>
+      <div><span class="g">?</span><span><b>Later</b><br><span class="muted">Something to pray over or study later.</span></span></div>
+    </div>
+    <p class="note">Instead of five pages of equal weight, you end up with ten or fifteen points that stand out.</p>
+  </section>
+
+  <section id="after">
+    <h2>Right after class</h2>
+    <p class="section-lede">Take five minutes before you talk to anyone. Close your notes and write three sentences.</p>
+    <div class="grid3">
+      <div class="card"><span class="stepnum">1</span><h4>The burden</h4><p class="muted">What was the brother trying to impart?</p><p class="example">The burden was that the Christian life is lived by the Spirit received through faith, not by self-effort.</p></div>
+      <div class="card"><span class="stepnum">2</span><h4>What I saw</h4><p class="muted">Not what was taught, but what you saw.</p><p class="example">I saw that walking by the Spirit is not outward behavior but living by the divine life.</p></div>
+      <div class="card"><span class="stepnum">3</span><h4>What touched me</h4><p class="muted">One sentence of your own.</p><p class="example">I was touched that I often try to improve myself instead of turning to the Spirit.</p></div>
+    </div>
+    <div class="check"><b>Test:</b> if you can’t write the burden without looking, you captured information but not yet the burden.</div>
+    <p class="note">These three sentences are already the skeleton of a prophecy. <a href="prophecy.html">See how to prepare one.</a></p>
+  </section>
+
+  <section id="later">
+    <h2>Later that day</h2>
+    <p class="section-lede">About fifteen minutes turns your notes into understanding.</p>
+    <ol class="later">
+      <li><div><b>Find the thread</b><span>What connects everything? Write it in one sentence, then in five words or less.</span></div></li>
+      <li><div><b>Find the skeleton</b><span>What were the three to five major movements of the speaking? Ignore the details.</span></div></li>
+      <li><div><b>Sort what you wrote</b><span>Most notes feel overwhelming because everything is weighted the same.</span>
+        <div class="tiers">
+          <div><b>Primary</b><br><span>If forgotten, the message is lost.</span></div>
+          <div><b>Secondary</b><br><span>Supports the burden.</span></div>
+          <div><b>Tertiary</b><br><span>Illustrations and extras.</span></div>
+        </div></div></li>
+      <li><div><b>Pick one key verse</b><span>The verse that carries the burden.</span></div></li>
+      <li><div><b>Ask why</b><span>Why did the brother feel burdened to give this message? Why was it needed?</span></div></li>
+      <li><div><b>Prepare a short prophecy</b><span>If you were asked to share right now, what would you say? <a href="prophecy.html">Use the prophecy page.</a></span></div></li>
+    </ol>
+  </section>
+
+  <section id="use">
+    <h2>Using your notes later</h2>
+    <p class="section-lede">Notes are a hook. They let you pick up where you left off instead of starting from zero.</p>
+    <div class="grid2">
+      <div class="card"><h4>How was the message presented?</h4><p class="muted">Notice the order and how the brother moved from one point to the next.</p></div>
+      <div class="card"><h4>How was each verse explained?</h4><p class="muted">Note how the verse was interpreted, then trace it back to the Word yourself.</p></div>
+      <div class="card"><h4>Crystallize</h4><p class="muted">Compress two or three sentences into one.</p></div>
+      <div class="card"><h4>Keep it in one place</h4><p class="muted">Store key statements together so you can browse them. <a href="index.html#capture">See the key statement log.</a></p></div>
+    </div>
+    <p class="note"><b>Review again and again.</b> The truth doesn’t change, but you grow. Each time you return to it, you see more.</p>
+  </section>
+
+  <div class="pagefoot">
+    <a href="index.html">← Study Block</a>
+    <a href="outlines.html">Outlines →</a>
+  </div>
+</div>
+</body>
+</html>

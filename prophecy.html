@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Preparing a Prophecy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+/* Prophecy page: ingredients, a week of notes gathered into a harvest, a builder with a three-minute meter, and a checklist. */
+.ing { border-top: 4px solid var(--c); }
+.ing.w { --c: var(--study); }
+.ing.s { --c: var(--priestly); }
+.ing.v { --c: var(--scribal); }
+
+.harvest { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) 1.6fr; gap: 6px; align-items: stretch; }
+.hday { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 6px; text-align: center; min-width: 0; }
+.hday b { display: block; font-size: 13px; }
+.hday i { display: block; width: 22px; height: 26px; margin: 8px auto 0; border-radius: 3px; background: var(--hl-y); border: 1px solid var(--rule); }
+.hday.end { border-color: var(--scribal); text-align: left; padding: 10px 12px; }
+.hday.end span { display: block; font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.35; }
+.stack { display: flex; gap: 3px; margin-top: 8px; }
+.stack i { width: 12px; height: 16px; border-radius: 2px; background: var(--hl-y); border: 1px solid var(--rule); }
+@media (max-width: 560px) {
+  .harvest { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hday.end { grid-column: 1 / -1; }
+}
+
+.shape { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.shape .card p.say { font-family: var(--font-display); font-style: italic; font-size: 16px; margin-top: 6px; color: var(--muted); }
+@media (max-width: 680px) { .shape { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 420px) { .shape { grid-template-columns: 1fr; } }
+
+.builder { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; display: grid; gap: 14px; }
+.builder .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 560px) { .builder .two { grid-template-columns: 1fr; } }
+.tag-ex { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.meter { display: grid; gap: 6px; }
+.meter .track { position: relative; height: 12px; border-radius: 999px; background: var(--paper); border: 1px solid var(--rule); overflow: hidden; }
+.meter .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--study); border-radius: 999px; }
+.meter.over .fill { background: var(--pen); }
+.meter .read { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 14px; font-variant-numeric: tabular-nums; }
+.meter .read b { font-size: 16px; }
+.meter .warn { color: var(--pen); font-weight: 600; }
+.brow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.copied { font-size: 14px; color: var(--study); font-weight: 600; }
+
+.doavoid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.doavoid .card h4 { display: flex; align-items: center; gap: 8px; }
+.doavoid .card h4::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.doavoid .do { --c: var(--study); }
+.doavoid .avoid { --c: var(--pen); }
+@media (max-width: 560px) { .doavoid { grid-template-columns: 1fr; } }
+
+.clist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 560px) { .clist { grid-template-columns: 1fr; } }
+.clist .card h4 { font-size: 17px; }
+.progress { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.burdenline { margin-top: 26px; font-family: var(--font-display); font-style: italic; font-size: 22px; line-height: 1.35; max-width: 36ch; text-wrap: balance; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="site-nav" aria-label="Site">
+    <a class="brand" href="index.html">Studying the Ministry</a>
+    <ul>
+      <li><a href="index.html">Study Block</a></li>
+      <li><a href="class-notes.html">Class Notes</a></li>
+      <li><a href="outlines.html">Outlines</a></li>
+      <li><a href="prophecy.html" aria-current="page">Prophecy</a></li>
+    </ul>
+  </nav>
+
+  <header>
+    <h1>Preparing a Prophecy</h1>
+    <p class="lede">To prophesy is to speak for Christ, speak forth Christ, and speak Christ into others for the building up of the church.</p>
+    <nav class="jump" aria-label="Sections">
+      <a href="#ingredients">Ingredients</a>
+      <a href="#week">During the week</a>
+      <a href="#compose">Compose</a>
+      <a href="#practice">Practice</a>
+      <a href="#meeting">In the meeting</a>
+      <a href="#checklist">Checklist</a>
+    </nav>
+  </header>
+
+  <section id="ingredients">
+    <h2>Three ingredients</h2>
+    <p class="section-lede">A prophecy needs all three.</p>
+    <div class="grid3">
+      <div class="card ing w"><h4>The Word</h4><p class="muted">The content. Without the Word you may be speaking, but not prophesying. Speak mainly what you have seen in the truth.</p></div>
+      <div class="card ing s"><h4>The Spirit</h4><p class="muted">The present inspiration. Live and walk by the Spirit, and stay open to Him while you speak.</p></div>
+      <div class="card ing v"><h4>Vision</h4><p class="muted">Light on God’s economy, the church, the saints, and the present need. It comes from the Lord in the light, not from analyzing.</p></div>
+    </div>
+    <p class="note"><b>Every believer can prophesy, and should.</b> Don’t hold back because you feel short in experience. If you speak the truth faithfully, the Lord can bring you into its reality.</p>
+  </section>
+
+  <section id="week">
+    <h2>During the week</h2>
+    <p class="section-lede">A prophecy comes from labor on Christ through the week, not from hoping something comes to you in the meeting.</p>
+    <div class="harvest" aria-label="One note a day gathered into a harvest at the end of the week">
+      <div class="hday"><b>Mon</b><i></i></div>
+      <div class="hday"><b>Tue</b><i></i></div>
+      <div class="hday"><b>Wed</b><i></i></div>
+      <div class="hday"><b>Thu</b><i></i></div>
+      <div class="hday"><b>Fri</b><i></i></div>
+      <div class="hday"><b>Sat</b><i></i></div>
+      <div class="hday end"><b>Your harvest</b><div class="stack"><i></i><i></i><i></i><i></i><i></i><i></i></div><span>Gather the week’s notes. Now you don’t have to wonder what to speak.</span></div>
+    </div>
+    <ul class="rows" style="margin-top:18px">
+      <li><b>Each morning, enjoy the Lord in the Word.</b><span>Write one short note of what touched you, what you saw, or what you enjoyed.</span></li>
+      <li><b>Don’t be picky with the Word.</b><span>Take what the Lord gives you and feed on it.</span></li>
+      <li><b>Muse on it.</b><span>Pray it back, turn it over, and carry it through the day. Don’t pass on food you haven’t digested.</span></li>
+      <li><b>Use the ministry helps.</b><span>The footnotes and the Life-studies open the verses for you.</span></li>
+    </ul>
+    <p class="note"><b>Come to the Lord fresh.</b> You can’t rely on yesterday’s revelation, even for the same words. Prayer comes first, then the speaking.</p>
+  </section>
+
+  <section id="compose">
+    <h2>Compose it</h2>
+    <p class="section-lede">One burden, one main point, under three minutes.</p>
+    <div class="shape">
+      <div class="card"><span class="stepnum">1</span><h4>Burden</h4><p class="say">“This week I was impressed that…”</p></div>
+      <div class="card"><span class="stepnum">2</span><h4>Main point</h4><p class="muted">The governing point, with the verse it stands on.</p></div>
+      <div class="card"><span class="stepnum">3</span><h4>Enjoyment</h4><p class="muted">What you enjoyed or experienced of Christ.</p></div>
+      <div class="card"><span class="stepnum">4</span><h4>Application</h4><p class="muted">Turn it to the saints, or end with a prayer.</p></div>
+    </div>
+
+    <h3>Write it out</h3>
+    <div class="builder">
+      <div class="brow"><span class="tag-ex" id="exTag">Example · replace with your own</span></div>
+      <div class="field"><label for="p1">Opening sentence</label><span class="hint">Write it out so you don’t stumble when you stand up.</span><textarea id="p1" rows="2">This week I was impressed that the Christian life is a life lived by the Spirit.</textarea></div>
+      <div class="two">
+        <div class="field"><label for="p2">Main point</label><textarea id="p2" rows="3">In Galatians, Paul shows two walks by the Spirit: our ordinary daily walk, and walking in line with God’s economy.</textarea></div>
+        <div class="field"><label for="p3">Verse references</label><span class="hint">Just the reference. Read the verse from your Bible when you speak.</span><input id="p3" type="text" value="Gal. 5:16, 25"></div>
+      </div>
+      <div class="field"><label for="p4">Supporting points</label><textarea id="p4" rows="2">We received the Spirit by faith, we live by the Spirit, and so we can walk by the Spirit.</textarea></div>
+      <div class="two">
+        <div class="field"><label for="p5">What I enjoyed of Christ</label><textarea id="p5" rows="3">I realized I often try to improve myself instead of simply turning to the Spirit.</textarea></div>
+        <div class="field"><label for="p6">Application or prayer</label><textarea id="p6" rows="3">Lord, keep us turning to You as the Spirit in every part of our day.</textarea></div>
+      </div>
+      <div class="meter" id="meter">
+        <div class="track"><div class="fill" id="fill"></div></div>
+        <div class="read"><span><b id="time">0:00</b> estimated · <span id="words">0</span> words</span><span id="limit">Aim for under 3:00</span></div>
+      </div>
+      <div class="brow">
+        <button type="button" class="btn primary" id="copyBtn">Copy prophecy</button>
+        <button type="button" class="btn" id="clearBtn">Clear</button>
+        <span class="copied" id="copied" hidden>Copied</span>
+      </div>
+    </div>
+    <p class="note">Time is estimated at about 130 words a minute. Keep one main point with supporting points; don’t summarize the whole message. Writing it all out is for preparing, not for reading in the meeting.</p>
+  </section>
+
+  <section id="practice">
+    <h2>Practice it</h2>
+    <p class="section-lede">Speak it again and again before the meeting.</p>
+    <div class="flowrow"><span>To yourself, out loud</span><i>→</i><span>Again and again</span><i>→</i><span>To one or two people</span><i>→</i><span>Ask for fellowship if the Lord leads</span></div>
+    <p class="note"><b>Listening perfects you too.</b> Notice how others open a verse and feed the saints. And if a classmate shares the same point, share it anyway. You will supply the Body in your own way.</p>
+  </section>
+
+  <section id="meeting">
+    <h2>In the meeting</h2>
+    <p class="section-lede">Before you stand, pray yourself into the burden. Don’t let other things occupy you that day.</p>
+    <div class="doavoid">
+      <div class="card do"><h4>Do</h4>
+        <ul>
+          <li>Speak Christ: what He is, what He has done, what you have enjoyed of Him.</li>
+          <li>Exercise your spirit, your voice, and your whole being.</li>
+          <li>Speak clearly, loud enough to be heard, and with life.</li>
+          <li>Stay open to fresh light while you speak.</li>
+          <li>Follow the flow of the meeting. Two to three minutes, or as arranged.</li>
+        </ul>
+      </div>
+      <div class="card avoid"><h4>Avoid</h4>
+        <ul>
+          <li>Reading from your phone or your notes.</li>
+          <li>Long stories, or yourself as the center.</li>
+          <li>Trying to cover everything you know.</li>
+          <li>Negative speaking, or indirectly correcting others.</li>
+          <li>Complicated illustrations and unrelated subjects.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note"><b>The test of a burden:</b> after you release it, you feel lighter, and something living has been deposited in others.</p>
+  </section>
+
+  <section id="checklist">
+    <h2>Before you stand up</h2>
+    <p class="section-lede">Run through this before the meeting. <span class="progress" id="progress"></span></p>
+    <div class="clist" id="clist">
+      <div class="card"><h4>During the week</h4><ul class="ticks">
+        <li><label><input type="checkbox" id="c1"> I’ve been in the Word daily.</label></li>
+        <li><label><input type="checkbox" id="c2"> I’ve prayed over what I read.</label></li>
+        <li><label><input type="checkbox" id="c3"> I’ve written down light and enjoyment.</label></li>
+        <li><label><input type="checkbox" id="c4"> I’ve gathered my notes.</label></li>
+      </ul></div>
+      <div class="card"><h4>In preparation</h4><ul class="ticks">
+        <li><label><input type="checkbox" id="c5"> One main point, with supporting points.</label></li>
+        <li><label><input type="checkbox" id="c6"> Specific verses.</label></li>
+        <li><label><input type="checkbox" id="c7"> Under three minutes.</label></li>
+        <li><label><input type="checkbox" id="c8"> Written out and practiced aloud.</label></li>
+      </ul></div>
+      <div class="card"><h4>In my living</h4><ul class="ticks">
+        <li><label><input type="checkbox" id="c9"> I’m walking by the Spirit.</label></li>
+        <li><label><input type="checkbox" id="c10"> I’m open to the Lord’s present speaking.</label></li>
+      </ul></div>
+      <div class="card"><h4>In delivery</h4><ul class="ticks">
+        <li><label><input type="checkbox" id="c11"> Clear, brief, and with life.</label></li>
+        <li><label><input type="checkbox" id="c12"> No stories or distractions.</label></li>
+        <li><label><input type="checkbox" id="c13"> Speaking Christ into others.</label></li>
+      </ul></div>
+    </div>
+    <div class="brow" style="margin-top:12px"><button type="button" class="btn" id="resetChecks">Clear checklist</button></div>
+    <p class="burdenline">Be constituted with the Word, live by the Spirit, prepare carefully, and speak Christ into others for the building up of the church.</p>
+  </section>
+
+  <div class="pagefoot">
+    <a href="outlines.html">← Outlines</a>
+    <a href="index.html">Study Block →</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var WPM = 130, LIMIT = 180;
+  var KEY = "stm-prophecy-draft-v1", CKEY = "stm-prophecy-checks-v1";
+  var ids = ["p1", "p2", "p3", "p4", "p5", "p6"];
+  var f = ids.map(function (id) { return document.getElementById(id); });
+  var defaults = f.map(function (el) { return el.value; });
+  var $ = function (id) { return document.getElementById(id); };
+
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (Array.isArray(saved) && saved.length === f.length) {
+      f.forEach(function (el, i) { el.value = typeof saved[i] === "string" ? saved[i] : ""; });
+    }
+  } catch (e) {}
+
+  function assemble() {
+    var v = f.map(function (el) { return el.value.trim(); });
+    var main = v[1] + (v[2] ? (v[1] ? " (" + v[2] + ")" : v[2]) : "");
+    return [v[0], main, v[3], v[4], v[5]].filter(Boolean).join("\n\n");
+  }
+  function update() {
+    var text = assemble();
+    var words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+    var secs = Math.round(words / WPM * 60);
+    $("words").textContent = words;
+    $("time").textContent = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
+    $("fill").style.width = Math.min(100, secs / LIMIT * 100) + "%";
+    var over = secs > LIMIT;
+    $("meter").classList.toggle("over", over);
+    $("limit").textContent = over ? "Over three minutes. Trim to one main point." : "Aim for under 3:00";
+    $("limit").className = over ? "warn" : "";
+    $("exTag").hidden = !f.every(function (el, i) { return el.value === defaults[i]; });
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(f.map(function (el) { return el.value; }))); } catch (e) {}
+  }
+  f.forEach(function (el) { el.addEventListener("input", function () { $("copied").hidden = true; update(); save(); }); });
+  $("clearBtn").addEventListener("click", function () {
+    f.forEach(function (el) { el.value = ""; });
+    $("copied").hidden = true; update(); save(); f[0].focus();
+  });
+  $("copyBtn").addEventListener("click", function () {
+    var text = assemble();
+    function fallback() {
+      $("copied").textContent = "Couldn’t copy here. Select the fields and copy them yourself.";
+      $("copied").hidden = false;
+    }
+    try {
+      navigator.clipboard.writeText(text).then(function () {
+        $("copied").textContent = "Copied"; $("copied").hidden = false;
+      }, fallback);
+    } catch (e) { fallback(); }
+  });
+
+  // Checklist
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("#clist input[type=checkbox]"));
+  try {
+    var cs = JSON.parse(localStorage.getItem(CKEY) || "null");
+    if (cs && typeof cs === "object") boxes.forEach(function (b) { b.checked = !!cs[b.id]; });
+  } catch (e) {}
+  function progress() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    $("progress").textContent = n + " of " + boxes.length + " ready.";
+  }
+  function saveChecks() {
+    var o = {}; boxes.forEach(function (b) { o[b.id] = b.checked; });
+    try { localStorage.setItem(CKEY, JSON.stringify(o)); } catch (e) {}
+  }
+  boxes.forEach(function (b) { b.addEventListener("change", function () { progress(); saveChecks(); }); });
+  $("resetChecks").addEventListener("click", function () { boxes.forEach(function (b) { b.checked = false; }); progress(); saveChecks(); });
+
+  update(); progress();
+})();
+</script>
+</body>
+</html>

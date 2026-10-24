@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reading an Outline</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+/* Annotated outline: each line carries its role in the flow, read like a printed outline with margin labels. */
+.outline { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 18px 16px; font-family: var(--font-display); }
+.outline .t { font-size: 22px; font-weight: 600; line-height: 1.2; display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; padding-bottom: 12px; margin-bottom: 8px; border-bottom: 1px solid var(--rule); }
+.ol-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 6px 0; }
+.ol-row .txt { font-size: 17px; line-height: 1.4; min-width: 0; }
+.ol-row .num { display: inline-block; min-width: 2.2em; font-weight: 600; }
+.lv2 .txt { padding-left: 2.2em; color: var(--muted); font-size: 16px; }
+.lv3 .txt { padding-left: 4.2em; color: var(--muted); font-size: 15px; }
+.role { font-family: var(--font-body); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--c, var(--rule)); color: var(--c, var(--muted)); white-space: nowrap; }
+.r-src { --c: var(--priestly); }
+.r-proc { --c: var(--study); }
+.r-exp { --c: var(--scribal); }
+.r-expr { --c: var(--pen); }
+.r-gov { --c: var(--ink); }
+.ol-cap { font-family: var(--font-body); font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+.progs { display: grid; gap: 10px; }
+.progs .flowrow span { font-size: 13px; }
+
+.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.tier { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 14px; position: relative; overflow: hidden; }
+.tier::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--ink); opacity: var(--o); }
+.tier h4 { margin: 0 0 4px; font-family: var(--font-display); font-size: 20px; }
+.tier p { margin: 0; color: var(--muted); font-size: 15px; }
+@media (max-width: 600px) { .tiers { grid-template-columns: 1fr; } }
+
+.contrasts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.contrasts span { font-family: var(--font-display); font-size: 16px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 6px 10px; }
+.contrasts i { font-style: normal; color: var(--muted); font-family: var(--font-body); font-size: 13px; margin: 0 4px; }
+
+.builder { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; display: grid; gap: 14px; }
+.builder .inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 560px) { .builder .inputs { grid-template-columns: 1fr; } }
+.sentence { font-family: var(--font-display); font-size: 21px; line-height: 1.4; padding: 14px; border-radius: 8px; background: var(--paper); border: 1px solid var(--rule); }
+.sentence em { font-style: normal; background: linear-gradient(transparent 16%, var(--hl-y) 16%, var(--hl-y) 90%, transparent 90%); padding: 0 2px; }
+.builder .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.tag-ex { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.copied { font-size: 14px; color: var(--study); font-weight: 600; }
+
+.week { display: grid; grid-template-columns: 1.6fr repeat(6, minmax(0, 1fr)); gap: 6px; }
+.day { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 8px; min-width: 0; text-align: center; }
+.day b { display: block; font-size: 13px; }
+.day span { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.3; }
+.day.lords { border-color: var(--priestly); text-align: left; }
+.daykey { margin-top: 10px; font-size: 14px; color: var(--muted); }
+@media (max-width: 560px) {
+  .week { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .day.lords { grid-column: 1 / -1; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="site-nav" aria-label="Site">
+    <a class="brand" href="index.html">Studying the Ministry</a>
+    <ul>
+      <li><a href="index.html">Study Block</a></li>
+      <li><a href="class-notes.html">Class Notes</a></li>
+      <li><a href="outlines.html" aria-current="page">Outlines</a></li>
+      <li><a href="prophecy.html">Prophecy</a></li>
+    </ul>
+  </nav>
+
+  <header>
+    <h1>Reading an Outline</h1>
+    <p class="lede">An outline is one flow of thought, not a list of separate points. Find the governing thought, follow how each point moves it forward, and connect every point to a verse.</p>
+    <nav class="jump" aria-label="Sections">
+      <a href="#title">The title</a>
+      <a href="#flow">The flow</a>
+      <a href="#verses">Verses</a>
+      <a href="#sort">Sort</a>
+      <a href="#sentence">One sentence</a>
+      <a href="#week">Weekly rhythm</a>
+    </nav>
+  </header>
+
+  <section id="title">
+    <h2>Start with the title</h2>
+    <p class="section-lede">The title is the governing thought. Everything in the outline explains, proves, develops, or applies it.</p>
+    <div class="card">
+      <ul class="qlist">
+        <li>What is the main subject, and what does the title say about it?</li>
+        <li>What burden does this title suggest?</li>
+        <li>What problem might this message be solving?</li>
+        <li>Why were these verses chosen?</li>
+      </ul>
+    </div>
+    <p class="note"><b>Turn the title into a sentence.</b> Then ask what that sentence needs to explain. That is what the Roman numerals will answer.</p>
+  </section>
+
+  <section id="flow">
+    <h2>Follow the flow</h2>
+    <p class="section-lede">Roman numerals are the main stages of the thought. Subpoints under them explain, prove, or apply each stage.</p>
+
+    <div class="outline" aria-label="Example outline with the role of each point">
+      <div class="t"><span>God’s Desire and Its Fulfillment</span><span class="role r-gov">Governing thought</span></div>
+      <div class="ol-row"><span class="txt"><span class="num">I.</span>God’s desire for a corporate expression</span><span class="role r-src">Source</span></div>
+      <div class="ol-row lv2"><span class="txt"><span class="num">A.</span>What God desires</span><span></span></div>
+      <div class="ol-row lv2"><span class="txt"><span class="num">B.</span>Why He desires it</span><span></span></div>
+      <div class="ol-row lv3"><span class="txt"><span class="num">1.</span>Details and verses that prove it</span><span></span></div>
+      <div class="ol-row"><span class="txt"><span class="num">II.</span>Christ accomplishing God’s desire</span><span class="role r-proc">Process</span></div>
+      <div class="ol-row"><span class="txt"><span class="num">III.</span>Our experience of Christ as life</span><span class="role r-exp">Experience</span></div>
+      <div class="ol-row"><span class="txt"><span class="num">IV.</span>The church expressing God</span><span class="role r-expr">Expression</span></div>
+      <p class="ol-cap">Example outline written for this page. Roman numeral = main claim · A, B, C = explanation · 1, 2, 3 = details and proofs.</p>
+    </div>
+
+    <h3>Ask of every Roman numeral</h3>
+    <ol class="qlist">
+      <li>What is this point saying?</li>
+      <li>Why is it here in the outline?</li>
+      <li>How does it connect to the title?</li>
+      <li>How does it connect to the point before it?</li>
+      <li>What burden does it advance?</li>
+    </ol>
+
+    <h3>Common progressions</h3>
+    <div class="progs">
+      <div class="flowrow"><span>Source</span><i>→</i><span>Process</span><i>→</i><span>Experience</span><i>→</i><span>Expression</span></div>
+      <div class="flowrow"><span>Revelation</span><i>→</i><span>Experience</span><i>→</i><span>Practice</span></div>
+      <div class="flowrow"><span>Objective truth</span><i>→</i><span>Subjective experience</span></div>
+      <div class="flowrow"><span>Problem</span><i>→</i><span>Solution</span><i>→</i><span>Result</span></div>
+      <div class="flowrow"><span>Individual experience</span><i>→</i><span>Corporate expression</span></div>
+    </div>
+    <p class="note"><b>Quick read:</b> Roman numeral I usually introduces the source, a definition, a revelation, or a problem. The last one usually shows the experience, the result, or the expression. The burden often shows up in the title, the first point, or the last.</p>
+  </section>
+
+  <section id="verses">
+    <h2>Connect every point to a verse</h2>
+    <p class="section-lede">The ministry always ties points of truth to verses. That is the standard to aim for in your own study.</p>
+    <ul class="rows">
+      <li><b>Write the reference beside each point.</b><span>If the outline doesn’t give one, look for the verse the point stands on.</span></li>
+      <li><b>Pray over the verse.</b><span>The ministry came this way: praying over the verses, receiving light, and writing down what was seen. Pray-read the verse behind each point.</span></li>
+      <li><b>Read the footnotes.</b><span>The outlines in the Recovery Version are formed by putting the footnotes together, so the footnotes open each point. Working through them builds a bird’s-eye view.</span></li>
+      <li><b>Go back and forth.</b><span>From the ministry to the Word, then back to the ministry. That cycle brings you into what the ministry has seen.</span></li>
+    </ul>
+  </section>
+
+  <section id="sort">
+    <h2>Sort by importance</h2>
+    <p class="section-lede">Sift what is primary, secondary, and tertiary. Don’t assume the easiest part to understand is the crucial point.</p>
+    <div class="tiers">
+      <div class="tier" style="--o:1"><h4>Primary</h4><p>Tied to God’s heart’s desire and His economy. If forgotten, the message is lost.</p></div>
+      <div class="tier" style="--o:.5"><h4>Secondary</h4><p>Supports and develops the primary points.</p></div>
+      <div class="tier" style="--o:.2"><h4>Tertiary</h4><p>Illustrations, examples, and side points.</p></div>
+    </div>
+    <p class="note"><b>What makes a point crucial</b> is how it ties to God’s heart’s desire. The training’s framework for that is God’s economy: the Triune God, the Spirit for our experience, the experience of life, and its consummation in the New Jerusalem.</p>
+    <h3>Watch for contrasts</h3>
+    <div class="contrasts">
+      <span>law <i>vs.</i> Spirit</span>
+      <span>self <i>vs.</i> Christ</span>
+      <span>religion <i>vs.</i> life</span>
+      <span>outward <i>vs.</i> inward</span>
+      <span>knowledge <i>vs.</i> experience</span>
+    </div>
+    <p class="note">A contrast shows what the message is correcting. Ask what spiritual condition is being exposed or healed.</p>
+  </section>
+
+  <section id="sentence">
+    <h2>Say it in one sentence</h2>
+    <p class="section-lede">Once you see the flow, you don’t have to memorize separate points. You can rebuild the outline and speak it.</p>
+    <div class="builder">
+      <div class="row"><span class="tag-ex" id="exTag">Example · replace with your outline</span></div>
+      <div class="inputs">
+        <div class="field"><label for="f1">I. Where it begins</label><input id="f1" type="text" value="God’s desire for an expression"></div>
+        <div class="field"><label for="f2">II. How it is accomplished</label><input id="f2" type="text" value="Christ’s full accomplishment"></div>
+        <div class="field"><label for="f3">III. What we experience</label><input id="f3" type="text" value="Christ as our life"></div>
+        <div class="field"><label for="f4">IV. What it produces</label><input id="f4" type="text" value="the church expressing God"></div>
+      </div>
+      <div class="sentence" id="flowSentence" aria-live="polite"></div>
+      <div class="row">
+        <button type="button" class="btn primary" id="copyBtn">Copy sentence</button>
+        <button type="button" class="btn" id="clearBtn">Clear</button>
+        <span class="copied" id="copied" hidden>Copied</span>
+      </div>
+    </div>
+    <p class="note"><b>Then speak the flow out loud:</b> “The message begins by showing… Then it shows… Finally it shows…” Now you are speaking the burden, not just listing points.</p>
+  </section>
+
+  <section id="week">
+    <h2>A weekly outline rhythm</h2>
+    <p class="section-lede">For an outline you live with all week, like a morning revival outline.</p>
+    <div class="week">
+      <div class="day lords"><b>Lord’s Day afternoon</b><span>Make a quick pass through the coming week’s outline to see what the week is about.</span></div>
+      <div class="day"><b>Mon</b><span>Pray, study, write, speak</span></div>
+      <div class="day"><b>Tue</b><span>Pray, study, write, speak</span></div>
+      <div class="day"><b>Wed</b><span>Pray, study, write, speak</span></div>
+      <div class="day"><b>Thu</b><span>Pray, study, write, speak</span></div>
+      <div class="day"><b>Fri</b><span>Pray, study, write, speak</span></div>
+      <div class="day"><b>Sat</b><span>Pray, study, write, speak</span></div>
+    </div>
+    <p class="daykey">Each day, pray over a portion of the outline to touch your spirit, connect its points to verses, write a few things down, and practice speaking with the outline.</p>
+  </section>
+
+  <div class="pagefoot">
+    <a href="class-notes.html">← Class Notes</a>
+    <a href="prophecy.html">Prophecy →</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "stm-outline-sentence-v1";
+  var ids = ["f1", "f2", "f3", "f4"];
+  var inputs = ids.map(function (id) { return document.getElementById(id); });
+  var out = document.getElementById("flowSentence");
+  var exTag = document.getElementById("exTag");
+  var copied = document.getElementById("copied");
+  var defaults = inputs.map(function (i) { return i.value; });
+
+  try {
+    var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (Array.isArray(saved) && saved.length === 4) {
+      inputs.forEach(function (inp, i) { inp.value = typeof saved[i] === "string" ? saved[i] : ""; });
+    }
+  } catch (e) {}
+
+  function part(v, ph) {
+    var em = document.createElement("em");
+    em.textContent = v.trim() || ph;
+    return em;
+  }
+  function plain() {
+    var v = inputs.map(function (i) { return i.value.trim() || "…"; });
+    return "Because of " + v[0] + ", through " + v[1] + ", we experience " + v[2] + ", which produces " + v[3] + ".";
+  }
+  function render() {
+    out.textContent = "";
+    var ph = ["the source", "the process", "the experience", "the expression"];
+    out.appendChild(document.createTextNode("Because of "));
+    out.appendChild(part(inputs[0].value, ph[0]));
+    out.appendChild(document.createTextNode(", through "));
+    out.appendChild(part(inputs[1].value, ph[1]));
+    out.appendChild(document.createTextNode(", we experience "));
+    out.appendChild(part(inputs[2].value, ph[2]));
+    out.appendChild(document.createTextNode(", which produces "));
+    out.appendChild(part(inputs[3].value, ph[3]));
+    out.appendChild(document.createTextNode("."));
+    var isExample = inputs.every(function (inp, i) { return inp.value === defaults[i]; });
+    exTag.hidden = !isExample;
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(inputs.map(function (i) { return i.value; }))); } catch (e) {}
+  }
+  inputs.forEach(function (inp) {
+    inp.addEventListener("input", function () { copied.hidden = true; render(); save(); });
+  });
+  document.getElementById("clearBtn").addEventListener("click", function () {
+    inputs.forEach(function (i) { i.value = ""; });
+    copied.hidden = true; render(); save(); inputs[0].focus();
+  });
+  document.getElementById("copyBtn").addEventListener("click", function () {
+    var text = plain();
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(out);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      copied.textContent = "Selected — copy it from here"; copied.hidden = false;
+    }
+    try {
+      navigator.clipboard.writeText(text).then(function () {
+        copied.textContent = "Copied"; copied.hidden = false;
+      }, fallback);
+    } catch (e) { fallback(); }
+  });
+  render();
+})();
+</script>
+</body>
+</html>

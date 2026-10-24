@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="site.css">
 <style>
 /* Standalone reset (the artifact viewer supplied these) */
 [hidden] { display: none !important; }
@@ -53,7 +54,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--font-body
   max-width: 760px; margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 28px 110px;
+  padding-block: 20px 110px;
 }
 a { color: inherit; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -280,6 +281,16 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
 </head>
 <body>
 <div class="wrap">
+  <nav class="site-nav" aria-label="Site">
+    <a class="brand" href="index.html">Studying the Ministry</a>
+    <ul>
+      <li><a href="index.html" aria-current="page">Study Block</a></li>
+      <li><a href="class-notes.html">Class Notes</a></li>
+      <li><a href="outlines.html">Outlines</a></li>
+      <li><a href="prophecy.html">Prophecy</a></li>
+    </ul>
+  </nav>
+
   <header>
     <h1>The Study Block</h1>
     <p class="lede">One class, one block, one key statement. Set the timer, mark with a purpose, ask the questions that uncover the burden, and capture what you saw before it fades.</p>
@@ -427,7 +438,8 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
         <dl class="qdl">
           <div><dt>Biblical basis</dt><dd>Where is this in the Word? Drive down from the ministry to the verse: what do Paul, John, or Revelation say?</dd></div>
           <div><dt>Gaps</dt><dd>Is there a jump here? What steps lead from the verse to what the brother saw? Search it out like the Bereans (Acts 17:11), believers in Berea who welcomed Paul’s word and then checked it against the Scriptures every day. Consider it; don’t doubt it.</dd></div>
-          <div><dt>Crucial or secondary</dt><dd>Does this point touch God’s heart’s desire and His economy, or is it just the easiest part to understand?</dd></div>
+          <div><dt>Primary or secondary</dt><dd>Is this primary, secondary, or tertiary? Primary points touch God’s heart’s desire and His economy. Don’t assume the easiest part to understand is the crucial one.</dd></div>
+          <div><dt>Purpose</dt><dd>Why was this message needed? What problem is it addressing, and what contrast does it draw, like law vs. Spirit or self vs. Christ?</dd></div>
           <div><dt>Pace</dt><dd>Is this point touching me so much that I’ll miss the central burden? Mark it ? and keep moving.</dd></div>
           <div><dt>Prayer</dt><dd>Can I turn this sentence into a short prayer right now?</dd></div>
         </dl>
@@ -463,7 +475,7 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
       <div class="rung r2"><b>One sentence</b><span>Your key statement for the week</span></div>
       <div class="rung r3"><b>One word or title</b><span>The hook that brings it all back</span></div>
     </div>
-    <p class="note">When you return to the title later, the whole study comes back with it. You don’t have to redo the process.</p>
+    <p class="note">When you return to the title later, the whole study comes back with it. You don’t have to redo the process. For turning it into a prophecy, see <a href="prophecy.html">Preparing a Prophecy</a>.</p>
 
     <h3>From light to speaking</h3>
     <div class="flow">
@@ -527,6 +539,10 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
     <blockquote>“The faintest ink is better than the sharpest mind.”</blockquote>
   </section>
 
+  <div class="pagefoot">
+    <span></span>
+    <a href="class-notes.html">Class Notes →</a>
+  </div>
 </div>
 
 <button type="button" class="mini" id="mini" hidden><span class="t" id="miniT">05:00</span><span class="s" id="miniS">Prepare your being</span></button>
@@ -549,8 +565,8 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
       act: ["Skim your class notes and the outline.", "Gauge how much material you need to cover.", "Write three guiding questions."],
       ask: ["In class, what was the brother impressing on us, and why?", "Which part of this topic is least familiar to me?", "What would I need to see to explain this lesson to someone?"] },
     { id: "read", name: "Active reading", g: "study", m60: 30, m90: 40, pace: true,
-      act: ["Read a section through, then go back and mark it.", "Highlight the point in yellow and the proof in blue; underline the explanation.", "Write a 3–6 word margin label for each section.", "Stop now and then to turn a sentence into prayer."],
-      ask: ["Where is this in the Word? Trace it from the ministry down to the verse.", "Is there a jump here? What steps lead from the verse to what the brother saw?", "Is this crucial, touching God’s heart’s desire, or just the easiest part to understand?", "Is one point holding me too long? Mark it ? and keep moving."] },
+      act: ["Read a section through, then go back and mark it.", "Highlight the point in yellow and the proof in blue; underline the explanation.", "Read the footnotes on the verses cited.", "Write a 3–6 word margin label for each section.", "Stop now and then to turn a sentence into prayer."],
+      ask: ["Where is this in the Word? Trace it from the ministry down to the verse.", "Is there a jump here? What steps lead from the verse to what the brother saw?", "Is this primary, secondary, or tertiary? Don’t assume the easiest part is the crucial one.", "Is one point holding me too long? Mark it ? and keep moving."] },
     { id: "review", name: "Review", g: "scribal", m60: 10, m90: 10,
       act: ["Answer the four review questions in writing.", "Use your margin labels as the main points.", "Now that you’ve seen the whole message, highlight the burden in pink."],
       ask: ["What are the main points, and what are their biblical bases?", "How do the main points relate to one another?", "What was the burden of this lesson?", "What portion enlightened or touched me the most?"] },
