@@ -1,6 +1,6 @@
-# FTTA Study Block
+# Studying the Ministry
 
-A one-page study companion for FTTA class study, built from the training's study guidelines and study fellowship notes.
+A one-page study companion for class study, built from the training's study guidelines and study fellowship notes.
 
 - **Timer:** a 60- or 90-minute study block that walks through each step (prepare, pray-read, survey, review, active reading, review, crystallize, bird's-eye) with what to do and what to ask.
 - **Marking key:** what to highlight in yellow, blue, and pink, plus pen marks (underline, double underline, box, circle, bracket, numbers, ?, →), with a practice page.
