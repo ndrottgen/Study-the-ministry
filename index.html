@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FTTA Study Block</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Standalone reset (the artifact viewer supplied these) */
+[hidden] { display: none !important; }
+body { margin: 0; }
+img { max-width: 100%; }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* Layout: one reading column like a marked study page — the timer is the working tool up top, then the marking key, questions, and capture methods as reference. */
+:root {
+  --paper: #F2F4F7;
+  --sheet: #FFFFFF;
+  --ink: #1A2030;
+  --muted: #586275;
+  --rule: #D8DCE4;
+  --pen: #C23A2B;
+  --priestly: #4152B0;
+  --study: #22706A;
+  --scribal: #8B3A78;
+  --hl-y: rgba(255, 210, 0, .42);
+  --hl-b: rgba(56, 150, 255, .26);
+  --hl-p: rgba(255, 80, 155, .28);
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #11141B; --sheet: #191D27; --ink: #E6E9F0; --muted: #9BA4B6; --rule: #2B3141; --pen: #FF8274;
+    --priestly: #95A2FF; --study: #5CC4B9; --scribal: #E592CF;
+    --hl-y: rgba(255, 210, 0, .30); --hl-b: rgba(90, 170, 255, .30); --hl-p: rgba(255, 110, 175, .32);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #11141B; --sheet: #191D27; --ink: #E6E9F0; --muted: #9BA4B6; --rule: #2B3141; --pen: #FF8274;
+  --priestly: #95A2FF; --study: #5CC4B9; --scribal: #E592CF;
+  --hl-y: rgba(255, 210, 0, .30); --hl-b: rgba(90, 170, 255, .30); --hl-p: rgba(255, 110, 175, .32);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+.wrap {
+  max-width: 760px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 110px;
+}
+a { color: inherit; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Header */
+.eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(36px, 8vw, 52px); line-height: 1.02; margin: 8px 0 12px; letter-spacing: -.015em; text-wrap: balance; }
+.lede { color: var(--muted); max-width: 56ch; margin: 0; }
+nav.jump { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+nav.jump a { font-size: 14px; font-weight: 600; text-decoration: none; padding: 6px 13px; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); }
+nav.jump a:hover { border-color: var(--muted); }
+
+section { margin-top: 56px; scroll-margin-top: 16px; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 1.12; margin: 0 0 6px; text-wrap: balance; letter-spacing: -.01em; }
+.section-lede { color: var(--muted); margin: 0 0 20px; max-width: 60ch; }
+h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 700; margin: 34px 0 12px; }
+
+/* Timer */
+.tool { background: var(--sheet); border: 1px solid var(--rule); border-radius: 14px; padding: 20px; margin-top: 26px; }
+.tool-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.seg-ctl { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; padding: 3px; background: var(--paper); }
+.seg-ctl button { border: 0; background: transparent; font: 600 14px var(--font-body); color: var(--muted); padding: 7px 15px; border-radius: 999px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.seg-ctl button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+.chime { font: 600 13px var(--font-body); color: var(--muted); background: transparent; border: 0; cursor: pointer; padding: 6px 4px; }
+
+.bar { display: flex; gap: 3px; height: 16px; margin: 20px 0 10px; }
+.seg { position: relative; border-radius: 3px; overflow: hidden; min-width: 8px; cursor: pointer; border: 0; padding: 0; background: transparent; }
+.seg::before { content: ""; position: absolute; inset: 0; background: var(--c); opacity: .18; }
+.seg .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--c); }
+.seg.current { outline: 2px solid var(--ink); outline-offset: 1px; }
+.g-priestly { --c: var(--priestly); }
+.g-study { --c: var(--study); }
+.g-scribal { --c: var(--scribal); }
+.legend { display: flex; gap: 6px 16px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin: 0; padding: 0; list-style: none; }
+.legend li::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: var(--c); margin-right: 6px; vertical-align: -1px; }
+.legend b { color: var(--ink); font-weight: 600; }
+
+.now { margin-top: 22px; }
+.now .meta { font-size: 13px; color: var(--muted); font-weight: 600; letter-spacing: .03em; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.pill { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; color: var(--c); border: 1px solid var(--c); }
+.now .name { font-family: var(--font-display); font-size: 28px; font-weight: 600; line-height: 1.15; margin: 6px 0 0; text-wrap: balance; }
+.clock { font-variant-numeric: tabular-nums; font-size: clamp(60px, 17vw, 88px); font-weight: 600; letter-spacing: -.03em; line-height: 1; margin: 10px 0 6px; }
+.overall { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; margin: 0; }
+
+.controls { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+.btn { font: 600 15px var(--font-body); border-radius: 10px; padding: 10px 16px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; min-height: 44px; }
+.btn.primary { background: var(--ink); color: var(--sheet); border-color: var(--ink); min-width: 116px; }
+.btn.text { background: transparent; border-color: transparent; color: var(--muted); padding-inline: 8px; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary:hover { opacity: .9; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--priestly); outline-offset: 2px; }
+
+.detail { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--rule); }
+.detail > div { min-width: 0; }
+.detail h4 { margin: 0 0 8px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.detail ul { margin: 0; padding-left: 18px; display: grid; gap: 7px; }
+.detail .ask li { font-family: var(--font-display); font-size: 17px; line-height: 1.4; }
+.pace { margin-top: 16px; font-size: 14px; padding: 10px 12px; border-radius: 8px; background: var(--paper); border: 1px dashed var(--rule); }
+@media (max-width: 560px) { .detail { grid-template-columns: 1fr; } }
+
+.steps { list-style: none; margin: 22px 0 0; padding: 0; border-top: 1px solid var(--rule); }
+.steps button { width: 100%; display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: center; padding: 11px 2px; border: 0; border-bottom: 1px solid var(--rule); background: transparent; color: var(--ink); font: 500 15px var(--font-body); text-align: left; cursor: pointer; }
+.steps .n { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 600; }
+.steps .nm { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.steps .nm::before { content: ""; flex: none; width: 4px; height: 18px; border-radius: 2px; background: var(--c); }
+.steps .mins { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 14px; white-space: nowrap; }
+.steps li.is-current button { font-weight: 700; }
+.steps li.is-current .mins { color: var(--ink); }
+.steps li.is-off button { color: var(--muted); cursor: default; }
+.steps li.is-off .nm::before { opacity: .35; }
+
+/* Marking key */
+.triage { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 640px) { .triage { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tri { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 13px 12px; }
+.tri .q { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 700; }
+.tri .a { margin-top: 8px; font-family: var(--font-display); font-size: 19px; line-height: 1.25; }
+.tri .w { margin-top: 6px; font-size: 13px; color: var(--muted); }
+.note { margin-top: 14px; font-size: 15px; color: var(--muted); max-width: 62ch; }
+.note b { color: var(--ink); }
+
+.swatches { display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.sw { display: grid; grid-template-columns: 120px 1fr; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.sw .word { font-family: var(--font-display); font-size: 20px; font-weight: 600; }
+.sw .use { min-width: 0; }
+.sw .use b { display: block; }
+.sw .use span { color: var(--muted); font-size: 14px; }
+@media (max-width: 420px) { .sw { grid-template-columns: 96px 1fr; } }
+
+.marks { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 10px; }
+.mk { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 12px; display: grid; gap: 6px; align-content: start; }
+.mk .ex { font-family: var(--font-display); font-size: 19px; line-height: 1.6; min-height: 30px; }
+.mk .lbl { font-weight: 600; font-size: 14px; }
+.mk .why { color: var(--muted); font-size: 14px; }
+.brk { display: inline-flex; align-items: stretch; gap: 8px; }
+.brk i { width: 8px; border: 2px solid var(--pen); border-right: 0; border-radius: 2px 0 0 2px; }
+.brk span { font-family: var(--font-hand); color: var(--pen); font-size: 21px; line-height: 1.1; }
+
+/* Marks (shared) */
+.hl-y, .hl-b, .hl-p { -webkit-box-decoration-break: clone; box-decoration-break: clone; padding: 0 1px; }
+.hl-y { background: linear-gradient(transparent 16%, var(--hl-y) 16%, var(--hl-y) 90%, transparent 90%); }
+.hl-b { background: linear-gradient(transparent 16%, var(--hl-b) 16%, var(--hl-b) 90%, transparent 90%); }
+.hl-p { background: linear-gradient(transparent 16%, var(--hl-p) 16%, var(--hl-p) 90%, transparent 90%); }
+.u1 { text-decoration: underline 1.5px var(--pen); text-underline-offset: 4px; }
+.u2 { text-decoration: underline double var(--pen); text-underline-offset: 4px; }
+.bx { border: 1.5px solid var(--pen); border-radius: 2px; padding: 0 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.cir { border: 1.5px solid var(--pen); border-radius: 999px; padding: 0 5px; }
+.num { display: inline-flex; align-items: center; justify-content: center; width: 1.2em; height: 1.2em; border: 1.5px solid var(--pen); border-radius: 50%; color: var(--pen); font: 700 .66em/1 var(--font-body); vertical-align: .3em; margin-right: 4px; }
+.star, .arrow, .qm { font-family: var(--font-hand); color: var(--pen); font-weight: 700; font-size: 1.3em; line-height: 1; margin: 0 2px; }
+
+/* Practice page */
+.layers { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.layer { font: 600 14px var(--font-body); padding: 7px 13px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--muted); cursor: pointer; }
+.layer[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
+.page { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 20px 20px 16px 0; display: grid; gap: 18px; }
+.page .tag { padding-left: 20px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.row { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; }
+.margin { font-family: var(--font-hand); color: var(--pen); font-size: 20px; line-height: 1.05; text-align: right; padding-right: 10px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+.margin.bracket { border-right: 2px solid var(--pen); position: relative; }
+.margin.bracket::before, .margin.bracket::after { content: ""; position: absolute; right: -2px; width: 7px; height: 2px; background: var(--pen); }
+.margin.bracket::before { top: 0; }
+.margin.bracket::after { bottom: 0; }
+.txt { margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 1.85; }
+.page:not(.show-hl) .hl-y, .page:not(.show-hl) .hl-b, .page:not(.show-hl) .hl-p { background: none; }
+.page:not(.show-pen) .u1, .page:not(.show-pen) .u2 { text-decoration: none; }
+.page:not(.show-pen) .bx, .page:not(.show-pen) .cir, .page:not(.show-pen) .num { border-color: transparent; }
+.page:not(.show-pen) .num, .page:not(.show-pen) .star, .page:not(.show-pen) .arrow { visibility: hidden; }
+.page:not(.show-margin) .margin { visibility: hidden; }
+@media (max-width: 480px) {
+  .row { grid-template-columns: 70px minmax(0, 1fr); gap: 10px; }
+  .margin { font-size: 17px; padding-right: 8px; }
+  .txt { font-size: 17px; }
+  .page { padding-right: 14px; }
+}
+
+.patterns { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.patterns li { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: minmax(0, 190px) minmax(0, 1fr); gap: 4px 16px; }
+.patterns .p { font-family: var(--font-display); font-size: 18px; font-style: italic; }
+.patterns .m { color: var(--muted); font-size: 15px; }
+@media (max-width: 520px) { .patterns li { grid-template-columns: 1fr; } }
+.check { margin-top: 14px; padding: 12px 14px; border-left: 3px solid var(--pen); background: var(--sheet); border-radius: 0 8px 8px 0; font-size: 15px; }
+
+/* Questions */
+.qgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 620px) { .qgrid { grid-template-columns: 1fr; } }
+.qcard { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; min-width: 0; }
+.qcard.wide { grid-column: 1 / -1; }
+.qcard h4 { margin: 0 0 4px; font-family: var(--font-display); font-size: 21px; font-weight: 600; }
+.qcard .when { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+.qcard ul, .qcard ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+.qcard li { line-height: 1.45; }
+.qdl { margin: 0; display: grid; gap: 12px; }
+.qdl div { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.qdl div:last-child { border-bottom: 0; padding-bottom: 0; }
+.qdl dt { font-weight: 700; font-size: 14px; letter-spacing: .02em; }
+.qdl dd { margin: 0; font-family: var(--font-display); font-size: 17px; line-height: 1.45; }
+@media (max-width: 520px) { .qdl div { grid-template-columns: 1fr; gap: 2px; } }
+.basic { font-family: var(--font-display); font-size: 22px; line-height: 1.3; margin: 0 0 18px; max-width: 34ch; text-wrap: balance; }
+
+/* Capture */
+.ladder { display: grid; gap: 8px; }
+.rung { border-radius: 8px; padding: 12px 14px; color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); position: relative; overflow: hidden; min-width: 0; }
+.rung::before { content: ""; position: absolute; inset: 0; background: var(--scribal); opacity: var(--o); }
+.rung > * { position: relative; }
+.rung b { display: block; font-family: var(--font-display); font-size: 19px; }
+.rung span { font-size: 14px; color: var(--muted); }
+.r1 { width: 100%; --o: .07; }
+.r2 { width: 72%; --o: .14; }
+.r3 { width: 46%; --o: .24; }
+@media (max-width: 480px) { .r2 { width: 84%; } .r3 { width: 64%; } }
+
+.flow { display: grid; grid-template-columns: repeat(7, auto); align-items: stretch; gap: 8px; }
+.fstep { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 12px; min-width: 0; }
+.fstep b { display: block; font-family: var(--font-display); font-size: 18px; margin-bottom: 4px; }
+.fstep span { font-size: 13px; color: var(--muted); line-height: 1.4; display: block; }
+.fstep.burden { border-color: var(--scribal); }
+.farrow { align-self: center; color: var(--muted); font-size: 20px; }
+.farrow::before { content: "→"; }
+@media (max-width: 700px) {
+  .flow { grid-template-columns: 1fr; }
+  .farrow { justify-self: center; }
+  .farrow::before { content: "↓"; }
+}
+.diag { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.diag div { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 12px; }
+.diag b { display: block; font-family: var(--font-display); font-size: 18px; }
+.diag span { font-size: 14px; color: var(--muted); }
+@media (max-width: 480px) { .diag { grid-template-columns: 1fr; } }
+
+.stairs-wrap { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; }
+.stairs { display: flex; align-items: flex-end; gap: 10px; height: 150px; }
+.wk { display: flex; flex-direction: column-reverse; gap: 3px; align-items: center; flex: 1; min-width: 0; }
+.wk i { display: block; width: 100%; max-width: 30px; height: 14px; border-radius: 3px; background: var(--priestly); opacity: .35; }
+.wk i:first-child { opacity: 1; background: var(--scribal); }
+.wklabels { display: flex; gap: 10px; margin-top: 8px; }
+.wklabels span { flex: 1; text-align: center; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 600; }
+.stairs-key { display: flex; gap: 6px 16px; flex-wrap: wrap; margin: 12px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--muted); }
+.stairs-key li::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--k); opacity: var(--ko, 1); }
+
+.cadence { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 18px 16px 14px; }
+.track { position: relative; height: 26px; margin: 0 6px; }
+.track::before { content: ""; position: absolute; left: 0; right: 0; top: 12px; height: 2px; background: var(--rule); }
+.track i { position: absolute; top: 7px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--study); border: 2px solid var(--sheet); }
+.phases { display: grid; grid-template-columns: 4fr 4fr 14fr 31fr; gap: 6px; margin-top: 6px; font-size: 12px; color: var(--muted); font-weight: 600; }
+.phases span { border-top: 2px solid var(--study); padding-top: 4px; min-width: 0; }
+.axis { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 10px; font-variant-numeric: tabular-nums; }
+
+.rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.rules li { padding: 13px 0; border-bottom: 1px solid var(--rule); }
+.rules b { display: block; }
+.rules span { color: var(--muted); font-size: 15px; }
+blockquote { margin: 18px 0 0; font-family: var(--font-display); font-style: italic; font-size: 21px; line-height: 1.35; }
+blockquote cite { display: block; font-style: normal; font-family: var(--font-body); font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--muted); }
+footer ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+
+/* Floating mini timer */
+.mini { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--sheet); border-radius: 999px; padding: 10px 18px; font: 600 15px var(--font-body); display: flex; gap: 10px; align-items: center; border: 0; cursor: pointer; max-width: calc(100% - 32px); box-shadow: 0 6px 20px rgba(0,0,0,.18); z-index: 20; }
+.mini .t { font-variant-numeric: tabular-nums; }
+.mini .s { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .8; font-weight: 500; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .seg .fill { transition: width .25s linear; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">FTTA · Truth study</div>
+    <h1>The Study Block</h1>
+    <p class="lede">One class, one block, one key statement. Set the timer, mark with a purpose, ask the questions that uncover the burden, and capture what you saw before it fades.</p>
+    <nav class="jump" aria-label="Sections">
+      <a href="#timer">Timer</a>
+      <a href="#mark">Mark</a>
+      <a href="#ask">Ask</a>
+      <a href="#capture">Capture</a>
+      <a href="#rules">Rules</a>
+    </nav>
+  </header>
+
+  <!-- TIMER -->
+  <section id="timer" style="margin-top:28px">
+    <div class="tool" id="tool">
+      <div class="tool-top">
+        <div class="seg-ctl" role="group" aria-label="Block length">
+          <button type="button" id="len60" aria-pressed="false">60 min</button>
+          <button type="button" id="len90" aria-pressed="true">90 min</button>
+        </div>
+        <button type="button" class="chime" id="chime" aria-pressed="true">Chime on</button>
+      </div>
+
+      <div class="bar" id="bar" aria-hidden="true"></div>
+      <ul class="legend">
+        <li class="g-priestly"><b>Priestly</b> · contact the Lord</li>
+        <li class="g-study"><b>Study</b> · labor in the word</li>
+        <li class="g-scribal"><b>Scribal</b> · write down what you saw</li>
+      </ul>
+
+      <div class="now">
+        <div class="meta"><span id="stepOf">Step 1 of 8</span><span class="pill g-priestly" id="stepGroup">Priestly</span></div>
+        <p class="name" id="stepName">Prepare your being</p>
+        <div class="clock" id="clock">05:00</div>
+        <p class="overall" id="overall">0 of 90 min used</p>
+      </div>
+
+      <div class="controls">
+        <button type="button" class="btn" id="back" aria-label="Previous step">Back</button>
+        <button type="button" class="btn primary" id="startBtn">Start</button>
+        <button type="button" class="btn" id="next" aria-label="Next step">Next</button>
+        <button type="button" class="btn text" id="reset">Reset</button>
+      </div>
+
+      <div class="detail" id="detail">
+        <div><h4>Do</h4><ul id="doList"></ul></div>
+        <div><h4>Ask</h4><ul class="ask" id="askList"></ul></div>
+      </div>
+      <div class="pace" id="pace" hidden></div>
+
+      <ol class="steps" id="steps" aria-label="All steps"></ol>
+      <p class="sr" aria-live="polite" id="live"></p>
+    </div>
+  </section>
+
+  <!-- MARK -->
+  <section id="mark">
+    <h2>Mark with a purpose</h2>
+    <p class="section-lede">Every mark has one job. Before you mark anything, ask one question: is this the point, the proof, or the explanation?</p>
+
+    <div class="triage">
+      <div class="tri"><div class="q">The point</div><div class="a"><span class="hl-y">Yellow</span></div><div class="w">About one sentence per section</div></div>
+      <div class="tri"><div class="q">The proof</div><div class="a"><span class="hl-b">Blue</span></div><div class="w">Verse references and the sentence that explains them</div></div>
+      <div class="tri"><div class="q">The explanation</div><div class="a"><span class="u1">Underline</span></div><div class="w">Supporting points under the main point</div></div>
+      <div class="tri"><div class="q">The burden</div><div class="a"><span class="hl-p">Pink</span></div><div class="w">Only after the whole message; 1–3 total</div></div>
+    </div>
+    <p class="note"><b>Read first, mark second.</b> Read a whole section through, under one heading or a few paragraphs, then go back and mark it. You can’t tell a main point from a supporting one until you’ve seen the whole section.</p>
+
+    <h3>Three highlighters</h3>
+    <div class="swatches">
+      <div class="sw"><div class="word"><span class="hl-y">Yellow</span></div><div class="use"><b>Main point of each section</b><span>Usually one sentence per section. If he never states it plainly, write it in the margin instead.</span></div></div>
+      <div class="sw"><div class="word"><span class="hl-b">Blue</span></div><div class="use"><b>Biblical basis</b><span>Every verse reference, plus the sentence where he explains what the verse means.</span></div></div>
+      <div class="sw"><div class="word"><span class="hl-p">Pink</span></div><div class="use"><b>The burden</b><span>Add it at the review step, once you’ve seen the whole message. One to three per message.</span></div></div>
+    </div>
+
+    <h3>Pen marks</h3>
+    <div class="marks">
+      <div class="mk"><div class="ex"><span class="u1">supporting point</span></div><div class="lbl">Single underline</div><div class="why">Reasons, steps, or details under a main point.</div></div>
+      <div class="mk"><div class="ex"><span class="u2">key statement</span><span class="star">★</span></div><div class="lbl">Double underline + ★</div><div class="why">A sentence worth keeping word for word. The ★ in the margin helps you find it again.</div></div>
+      <div class="mk"><div class="ex"><span class="bx">economy</span></div><div class="lbl">Box</div><div class="why">A key term. Underline its definition when he gives one.</div></div>
+      <div class="mk"><div class="ex"><span class="cir">therefore</span></div><div class="lbl">Circle</div><div class="why">Logic words: therefore, but, not…but, this is why, first, second. They show how points relate.</div></div>
+      <div class="mk"><div class="ex"><span class="brk"><i></i><span>dispensing → Body</span></span></div><div class="lbl">Bracket + label</div><div class="why">A passage that develops one point. Write 3–6 words beside it.</div></div>
+      <div class="mk"><div class="ex"><span class="num">1</span><span class="num">2</span><span class="num">3</span></div><div class="lbl">Numbers</div><div class="why">Items he lists, even when they’re spread across paragraphs.</div></div>
+      <div class="mk"><div class="ex"><span class="qm">?</span></div><div class="lbl">Question mark</div><div class="why">A jump you need to trace back to the Word later.</div></div>
+      <div class="mk"><div class="ex"><span class="arrow">→</span></div><div class="lbl">Arrow</div><div class="why">A turn in the flow of the message.</div></div>
+    </div>
+
+    <h3>See it on a page</h3>
+    <div class="layers" role="group" aria-label="Show marking layers">
+      <button type="button" class="layer" data-layer="show-hl" aria-pressed="true">Highlights</button>
+      <button type="button" class="layer" data-layer="show-pen" aria-pressed="true">Pen marks</button>
+      <button type="button" class="layer" data-layer="show-margin" aria-pressed="true">Margin labels</button>
+    </div>
+    <div class="page show-hl show-pen show-margin" id="page">
+      <div class="tag">Practice page · written for this guide, not quoted from the ministry</div>
+      <div class="row">
+        <div class="margin bracket"><span>Economy =<br>dispensing</span></div>
+        <p class="txt">God’s <span class="bx">economy</span> is <span class="cir">not</span> mainly a matter of doctrine or outward practice, <span class="cir">but</span> <span class="hl-y">God’s household administration to <span class="bx">dispense</span> Himself into His chosen people</span> <span class="hl-b">(Eph. 3:9; 1 Tim. 1:4)</span>. <span class="num">1</span><span class="u1">The Triune God dispenses Himself as the Father in the Son and the Son as the Spirit</span>; <span class="num">2</span><span class="u1">this dispensing reaches us in our spirit and spreads into our whole being</span>. <span class="cir">Therefore</span>, <span class="u2">the issue of God’s economy is a people constituted with God</span><span class="star">★</span></p>
+      </div>
+      <div class="row">
+        <div class="margin"><span>Goal =<br>the Body</span><span class="qm">? dispensing → building</span></div>
+        <p class="txt"><span class="arrow">→</span> This dispensing does not stop with individuals. <span class="hl-b">Ephesians 4 shows the Body being built up as each member functions (Eph. 4:16).</span> <span class="hl-p">The goal of God’s economy is the Body of Christ, the corporate expression of the Triune God.</span></p>
+      </div>
+    </div>
+
+    <h3>Patterns to watch for in the ministry</h3>
+    <ul class="patterns">
+      <li><span class="p">“Not… but…”</span><span class="m">He is correcting a natural idea. The point is on the “but” side.</span></li>
+      <li><span class="p">“This means” · “this is why” · “therefore”</span><span class="m">These often introduce the point right after the verses.</span></li>
+      <li><span class="p">A phrase that keeps coming back</span><span class="m">Repetition across several pages usually signals the burden.</span></li>
+    </ul>
+    <div class="check"><b>Quick check:</b> if more than about a third of a page is marked, you’re highlighting what’s interesting, not what’s main.</div>
+  </section>
+
+  <!-- ASK -->
+  <section id="ask">
+    <h2>Ask your way to the burden</h2>
+    <p class="section-lede">The basic question under all the others:</p>
+    <p class="basic">How do I see this in the Word of God?</p>
+
+    <div class="qgrid">
+      <div class="qcard">
+        <h4>Before reading</h4>
+        <p class="when">Step 4 · pick three as guiding questions</p>
+        <ul>
+          <li>What is the title telling me this message is about?</li>
+          <li>In class, what was the brother impressing on us, not only what he said but why he said it?</li>
+          <li>Which part of this topic is least familiar to me?</li>
+          <li>What would I need to see to explain this lesson to someone else?</li>
+        </ul>
+      </div>
+      <div class="qcard">
+        <h4>After reading</h4>
+        <p class="when">Step 6 · the training’s four review questions</p>
+        <ol>
+          <li>What are the main points of this reading, and what are their biblical bases?</li>
+          <li>How do the main points relate to one another?</li>
+          <li>What was the burden of this lesson?</li>
+          <li>What portion of this message enlightened or touched me the most?</li>
+        </ol>
+      </div>
+      <div class="qcard wide">
+        <h4>While reading</h4>
+        <p class="when">Step 5 · ask of each main point</p>
+        <dl class="qdl">
+          <div><dt>Biblical basis</dt><dd>Where is this in the Word? Drive down from the ministry to the verse: what do Paul, John, or Revelation say?</dd></div>
+          <div><dt>Gaps</dt><dd>Is there a jump here? What steps lead from the verse to what Brother Lee saw? Consider it as the Bereans did, not in a doubting way.</dd></div>
+          <div><dt>Crucial or secondary</dt><dd>Does this point touch God’s heart’s desire and His economy, or is it just the easiest part to understand?</dd></div>
+          <div><dt>Pace</dt><dd>Is this point touching me so much that I’ll miss the central burden? Mark it ? and keep moving.</dd></div>
+          <div><dt>Prayer</dt><dd>Can I turn this sentence into a short prayer right now?</dd></div>
+        </dl>
+      </div>
+      <div class="qcard">
+        <h4>Crystallizing</h4>
+        <p class="when">Step 7</p>
+        <ul>
+          <li>What one sentence holds everything the Lord showed me in this block?</li>
+          <li>What word or title would bring this whole study back when I see it again?</li>
+          <li>What question would lead someone from point A to point B? For example: how can the only begotten Son of God be the Firstborn Son if there is no change in God (Heb. 13:8)?</li>
+        </ul>
+      </div>
+      <div class="qcard">
+        <h4>Bird’s-eye view</h4>
+        <p class="when">Step 8</p>
+        <ul>
+          <li>How does this week’s key statement connect to the earlier weeks?</li>
+          <li>Where does this sit in God’s economy: the Triune God, the Spirit for our experience, the experience of life, the New Jerusalem?</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPTURE -->
+  <section id="capture">
+    <h2>Capture it before it fades</h2>
+    <p class="section-lede">Light shines and then flees. End every block by compressing what you saw, and keep it where you can find it again.</p>
+
+    <h3>Whittle it down</h3>
+    <div class="ladder">
+      <div class="rung r1"><b>Three sentences</b><span>Everything the Lord showed you in this block</span></div>
+      <div class="rung r2"><b>One sentence</b><span>Your key statement for the week</span></div>
+      <div class="rung r3"><b>One word or title</b><span>The hook that brings it all back</span></div>
+    </div>
+    <p class="note">When you return to the title later, the whole study comes back with it. You don’t have to redo the process.</p>
+
+    <h3>From light to speaking</h3>
+    <div class="flow">
+      <div class="fstep"><b>Revelation</b><span>Light from the Lord in prayer. It fades quickly.</span></div>
+      <div class="farrow" aria-hidden="true"></div>
+      <div class="fstep"><b>Thoughts</b><span>Capture it with your mind and write it down right away.</span></div>
+      <div class="farrow" aria-hidden="true"></div>
+      <div class="fstep burden"><b>Inner words</b><span>A word or sentence taught by the Spirit (1 Cor. 2:13). This is the burden.</span></div>
+      <div class="farrow" aria-hidden="true"></div>
+      <div class="fstep"><b>Outer words</b><span>Release the burden by speaking, with words gathered from the Bible and the ministry.</span></div>
+    </div>
+    <div class="diag">
+      <div><b>A burden, but no words</b><span>Spend more time in the Word. You need more outer words.</span></div>
+      <div><b>Words, but no burden</b><span>Spend more time with the Lord in prayer.</span></div>
+    </div>
+
+    <h3>Build the bird’s-eye view</h3>
+    <div class="stairs-wrap">
+      <div class="stairs" aria-label="Key statements accumulating over seven weeks">
+        <div class="wk"><i></i></div>
+        <div class="wk"><i></i><i></i></div>
+        <div class="wk"><i></i><i></i><i></i></div>
+        <div class="wk"><i></i><i></i><i></i><i></i></div>
+        <div class="wk"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="wk"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="wk"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="wklabels" aria-hidden="true"><span>Wk 1</span><span>Wk 2</span><span>Wk 3</span><span>Wk 4</span><span>Wk 5</span><span>Wk 6</span><span>Wk 7</span></div>
+      <ul class="stairs-key">
+        <li style="--k: var(--scribal)">This week’s statement</li>
+        <li style="--k: var(--priestly); --ko: .35">Earlier statements you reread in prayer</li>
+      </ul>
+    </div>
+    <p class="note">Each block ends with one statement. Rereading the earlier ones in prayer at the end of each block is how the bird’s-eye view forms. By week 7 you are looking at seven statements together.</p>
+
+    <h3>Memorize one phrase and one verse</h3>
+    <div class="cadence">
+      <div class="track" aria-label="Recall schedule over about two months">
+        <i style="left:0%"></i><i style="left:1.7%"></i><i style="left:3.4%"></i><i style="left:5.1%"></i>
+        <i style="left:8.5%"></i><i style="left:11.9%"></i>
+        <i style="left:23.7%"></i><i style="left:35.6%"></i>
+        <i style="left:100%"></i>
+      </div>
+      <div class="phases" aria-hidden="true"><span>Daily</span><span>Every other day</span><span>Weekly</span><span>Monthly</span></div>
+      <div class="axis"><span>Day 1</span><span>Day 60</span></div>
+    </div>
+    <p class="note">Pick them from your key statement log. Each recall strengthens the connection, so you can stretch the gap between recalls. There is no shortcut besides repetition.</p>
+  </section>
+
+  <!-- RULES -->
+  <section id="rules">
+    <h2>Ground rules</h2>
+    <ul class="rules">
+      <li><b>Gather before the clock starts.</b><span>Syllabus, outline, reading assignment, Recovery Version with footnotes, class notes, pen, highlighters, and this class’s key statement log.</span></li>
+      <li><b>Keep strictly to your schedule.</b><span>Study extra for a class only after every class has had its hour.</span></li>
+      <li><b>Don’t stall on one verse.</b><span>If a point touches you, mark it ? and come back, so you still finish and still catch the central burden.</span></li>
+      <li><b>Balance prayer and the word, about 50/50.</b><span>Concentrated prayer at the start and end of the block, short prayers sprinkled through the reading.</span></li>
+      <li><b>Never cut the produce step.</b><span>If time runs short, trim the reading, not the writing and speaking.</span></li>
+      <li><b>Speak it to someone.</b><span>Explaining the lesson to another person is the most active way to study. Lesson summaries are due for two classes a week; write each the same day as its class.</span></li>
+    </ul>
+    <blockquote>“The faintest ink is better than the sharpest mind.”<cite>Brother Nee, as shared in the training’s study guidelines</cite></blockquote>
+  </section>
+
+  <footer>
+    Drawn from your FTTA dashboard notes:
+    <ul>
+      <li><a href="https://app.notion.com/p/3f03b4dc26b98093b026e6322e3fa2b3" target="_blank" rel="noopener">Practical Guidelines on Studying the Truth in the Training</a></li>
+      <li><a href="https://app.notion.com/p/3ed3b4dc26b9807abcfecd97c405a8dd" target="_blank" rel="noopener">J.B. Study Fellowship</a></li>
+      <li><a href="https://app.notion.com/p/2963b4dc26b980a18f42f364086b7846" target="_blank" rel="noopener">Study Fellowship, Oct 23, 2025</a></li>
+      <li><a href="https://app.notion.com/p/2a43b4dc26b9803a847bc706fffccbcd" target="_blank" rel="noopener">Study Fellowship, Nov 6, 2025</a></li>
+      <li><a href="https://app.notion.com/p/3f03b4dc26b9800f9d25daa796f836d0" target="_blank" rel="noopener">Study Fellowship on Memorizing</a></li>
+      <li><a href="https://app.notion.com/p/3363b4dc26b98009b747c9bfc196d2df" target="_blank" rel="noopener">Mining the Truth &amp; Studying the Ministry</a></li>
+    </ul>
+  </footer>
+</div>
+
+<button type="button" class="mini" id="mini" hidden><span class="t" id="miniT">05:00</span><span class="s" id="miniS">Prepare your being</span></button>
+
+<script>
+(function () {
+  "use strict";
+  var GROUPS = { priestly: "Priestly", study: "Study", scribal: "Scribal" };
+  var STEPS = [
+    { id: "prepare", name: "Prepare your being", g: "priestly", m60: 2, m90: 5,
+      act: ["Call on the Lord.", "Confess, then empty and unload yourself, even of good things.", "Pray for a spirit of wisdom and revelation (Eph. 1:17).", "Read the message title slowly and prayerfully."],
+      ask: ["What is filling me that I need to unload before I can receive?", "Lord, what do You want to impress on me in this message?"] },
+    { id: "verses", name: "Pray-read key verses", g: "priestly", m60: 5, m90: 7,
+      act: ["Pray-read one or two key verses for the lesson.", "Write down the word or phrase that touches you."],
+      ask: ["What verses does this lesson stand on?", "What is the Lord speaking to me through these words?"] },
+    { id: "survey", name: "Survey the forest", g: "study", m60: 0, m90: 8,
+      act: ["Scan the whole reading from start to end.", "Read the headings and the first and last sentences of each section.", "Don’t mark anything yet."],
+      ask: ["What is the title telling me this message is about?", "From the headings, what might the burden be?"] },
+    { id: "aim", name: "Review and aim", g: "study", m60: 5, m90: 5,
+      act: ["Skim your class notes and the outline.", "Gauge how much material you need to cover.", "Write three guiding questions."],
+      ask: ["In class, what was the brother impressing on us, and why?", "Which part of this topic is least familiar to me?", "What would I need to see to explain this lesson to someone?"] },
+    { id: "read", name: "Active reading", g: "study", m60: 30, m90: 40, pace: true,
+      act: ["Read a section through, then go back and mark it.", "Highlight the point in yellow and the proof in blue; underline the explanation.", "Write a 3–6 word margin label for each section.", "Stop now and then to turn a sentence into prayer."],
+      ask: ["Where is this in the Word? Trace it from the ministry down to the verse.", "Is there a jump here? What steps lead from the verse to what Brother Lee saw?", "Is this crucial, touching God’s heart’s desire, or just the easiest part to understand?", "Is one point holding me too long? Mark it ? and keep moving."] },
+    { id: "review", name: "Review", g: "scribal", m60: 10, m90: 10,
+      act: ["Answer the four review questions in writing.", "Use your margin labels as the main points.", "Now that you’ve seen the whole message, highlight the burden in pink."],
+      ask: ["What are the main points, and what are their biblical bases?", "How do the main points relate to one another?", "What was the burden of this lesson?", "What portion enlightened or touched me the most?"] },
+    { id: "produce", name: "Crystallize and produce", g: "scribal", m60: 8, m90: 10,
+      act: ["Whittle it down: three sentences, then one sentence, then one word or title.", "Write a 3–4 sentence summary, or outline a prophecy on one point that touched you.", "Speak it aloud."],
+      ask: ["What one sentence holds everything the Lord showed me?", "What word or title would bring this whole study back?", "What question would lead someone from point A to point B?"] },
+    { id: "birdseye", name: "Bird’s-eye and pray it back", g: "priestly", m60: 0, m90: 5,
+      act: ["Reread this class’s earlier key statements.", "Pray today’s key statement back to the Lord.", "Copy today’s statement and title into the class log."],
+      ask: ["How does this week connect to the earlier weeks?", "Where does this sit in God’s economy?"] }
+  ];
+  var DONE = {
+    act: ["Copy today’s key statement and title into this class’s log.", "List any ? items to return to.", "Check whether a lesson summary is due for this class."],
+    ask: ["If someone asked me for a 30-second sharing right now, could I give it?"]
+  };
+  var KEY = "ftta-study-block-v1";
+  var S = { len: 90, idx: 0, running: false, endAt: 0, remain: null, done: false, sound: true };
+
+  function list() { return STEPS.filter(function (s) { return s["m" + S.len] > 0; }); }
+  function stepMs(i) { return list()[i]["m" + S.len] * 60000; }
+  function totalMs() { return list().reduce(function (a, s) { return a + s["m" + S.len] * 60000; }, 0); }
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+  }
+  function load() {
+    try {
+      var d = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (d && (d.len === 60 || d.len === 90)) {
+        S.len = d.len;
+        S.idx = Math.min(Math.max(0, d.idx | 0), list().length - 1);
+        S.running = !!d.running;
+        S.endAt = +d.endAt || 0;
+        S.remain = typeof d.remain === "number" ? d.remain : null;
+        S.done = !!d.done;
+        S.sound = d.sound !== false;
+      }
+    } catch (e) {}
+    if (S.remain == null || S.remain > stepMs(S.idx) || S.remain < 0) S.remain = stepMs(S.idx);
+    if (S.running && !S.endAt) S.running = false;
+    if (S.running) catchUp(false);
+  }
+
+  // Audio
+  var ac = null;
+  function unlockAudio() {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === "suspended") ac.resume();
+    } catch (e) {}
+  }
+  function chime(n) {
+    if (!S.sound || !ac) return;
+    try {
+      var t0 = ac.currentTime;
+      for (var k = 0; k < n; k++) {
+        var o = ac.createOscillator(), g = ac.createGain(), t = t0 + k * 0.38;
+        o.type = "sine";
+        o.frequency.value = k ? 784 : 659;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.22, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
+        o.connect(g); g.connect(ac.destination);
+        o.start(t); o.stop(t + 1.3);
+      }
+    } catch (e) {}
+  }
+
+  // Wake lock
+  var wl = null;
+  function holdWake() {
+    try {
+      if ("wakeLock" in navigator) {
+        navigator.wakeLock.request("screen").then(function (l) { wl = l; }).catch(function () {});
+      }
+    } catch (e) {}
+  }
+  function releaseWake() {
+    try { if (wl) wl.release(); } catch (e) {}
+    wl = null;
+  }
+
+  function catchUp(withChime) {
+    var r = S.endAt - Date.now();
+    var changed = false;
+    while (r <= 0) {
+      if (S.idx < list().length - 1) {
+        S.idx++;
+        S.endAt += stepMs(S.idx);
+        r = S.endAt - Date.now();
+        changed = true;
+      } else {
+        S.running = false; S.done = true; r = 0; changed = true;
+        releaseWake();
+        break;
+      }
+    }
+    S.remain = Math.max(0, r);
+    if (changed) {
+      if (withChime) chime(S.done ? 2 : 1);
+      announce();
+      save();
+    }
+  }
+
+  // Elements
+  var $ = function (id) { return document.getElementById(id); };
+  var el = {
+    len60: $("len60"), len90: $("len90"), chime: $("chime"), bar: $("bar"),
+    stepOf: $("stepOf"), stepGroup: $("stepGroup"), stepName: $("stepName"), clock: $("clock"), overall: $("overall"),
+    back: $("back"), start: $("startBtn"), next: $("next"), reset: $("reset"),
+    doList: $("doList"), askList: $("askList"), pace: $("pace"), steps: $("steps"), live: $("live"),
+    mini: $("mini"), miniT: $("miniT"), miniS: $("miniS"), tool: $("tool")
+  };
+
+  function fmt(ms) {
+    var s = Math.max(0, Math.ceil(ms / 1000));
+    var m = Math.floor(s / 60), r = s % 60;
+    return (m < 10 ? "0" : "") + m + ":" + (r < 10 ? "0" : "") + r;
+  }
+  function fillList(ul, items) {
+    ul.textContent = "";
+    items.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+  }
+  function announce() {
+    var L = list();
+    el.live.textContent = S.done ? "Block complete." : "Step " + (S.idx + 1) + ": " + L[S.idx].name;
+  }
+
+  function buildBar() {
+    el.bar.textContent = "";
+    list().forEach(function (s, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "seg g-" + s.g;
+      b.style.flexGrow = s["m" + S.len];
+      b.tabIndex = -1;
+      b.setAttribute("aria-label", s.name);
+      b.innerHTML = '<span class="fill"></span>';
+      b.addEventListener("click", function () { jump(i); });
+      el.bar.appendChild(b);
+    });
+  }
+  function buildSteps() {
+    el.steps.textContent = "";
+    var L = list();
+    STEPS.forEach(function (s) {
+      var li = document.createElement("li");
+      var on = s["m" + S.len] > 0;
+      var i = L.indexOf(s);
+      li.className = "g-" + s.g + (on ? "" : " is-off");
+      li.dataset.id = s.id;
+      var b = document.createElement("button");
+      b.type = "button";
+      if (!on) b.disabled = true;
+      b.innerHTML = '<span class="n"></span><span class="nm"></span><span class="mins"></span>';
+      b.querySelector(".n").textContent = on ? (i + 1) : "–";
+      b.querySelector(".nm").textContent = s.name;
+      b.querySelector(".mins").textContent = on ? s["m" + S.len] + " min" : "90-min block only";
+      if (on) b.addEventListener("click", function () { jump(i); });
+      li.appendChild(b);
+      el.steps.appendChild(li);
+    });
+  }
+
+  var shownIdx = -1, shownDone = null, shownLen = null;
+  function render() {
+    var L = list(), n = L.length, s = L[S.idx];
+    if (shownLen !== S.len) {
+      buildBar(); buildSteps();
+      el.len60.setAttribute("aria-pressed", S.len === 60);
+      el.len90.setAttribute("aria-pressed", S.len === 90);
+      shownLen = S.len; shownIdx = -1;
+    }
+    el.chime.textContent = S.sound ? "Chime on" : "Chime off";
+    el.chime.setAttribute("aria-pressed", S.sound);
+
+    if (shownIdx !== S.idx || shownDone !== S.done) {
+      if (S.done) {
+        el.stepOf.textContent = "All " + n + " steps";
+        el.stepGroup.textContent = "Done";
+        el.stepGroup.className = "pill g-scribal";
+        el.stepName.textContent = "Block complete";
+        fillList(el.doList, DONE.act);
+        fillList(el.askList, DONE.ask);
+        el.pace.hidden = true;
+      } else {
+        el.stepOf.textContent = "Step " + (S.idx + 1) + " of " + n;
+        el.stepGroup.textContent = GROUPS[s.g];
+        el.stepGroup.className = "pill g-" + s.g;
+        el.stepName.textContent = s.name;
+        fillList(el.doList, s.act);
+        fillList(el.askList, s.ask);
+        if (s.pace) {
+          var half = s["m" + S.len] / 2;
+          el.pace.textContent = "Halfway check: when this step shows " + (half < 10 ? "0" : "") + half + ":00, you should be halfway through the reading.";
+          el.pace.hidden = false;
+        } else {
+          el.pace.hidden = true;
+        }
+      }
+      Array.prototype.forEach.call(el.steps.children, function (li) {
+        li.classList.toggle("is-current", !S.done && li.dataset.id === s.id);
+      });
+      Array.prototype.forEach.call(el.bar.children, function (b, i) {
+        b.classList.toggle("current", !S.done && i === S.idx);
+      });
+      shownIdx = S.idx; shownDone = S.done;
+    }
+
+    el.clock.textContent = S.done ? "Done" : fmt(S.remain);
+    var elapsed = 0;
+    for (var j = 0; j < S.idx; j++) elapsed += stepMs(j);
+    elapsed += stepMs(S.idx) - S.remain;
+    if (S.done) elapsed = totalMs();
+    el.overall.textContent = Math.floor(elapsed / 60000) + " of " + S.len + " min used";
+
+    Array.prototype.forEach.call(el.bar.children, function (b, i) {
+      var f = b.firstChild, w;
+      if (S.done || i < S.idx) w = 100;
+      else if (i > S.idx) w = 0;
+      else w = (1 - S.remain / stepMs(i)) * 100;
+      f.style.width = w + "%";
+    });
+
+    el.start.textContent = S.running ? "Pause" : (S.done ? "Start over" : (S.remain < stepMs(S.idx) || S.idx > 0 ? "Resume" : "Start"));
+    el.back.disabled = S.idx === 0 && !S.done && S.remain === stepMs(0);
+    el.next.disabled = S.done;
+
+    el.miniT.textContent = S.done ? "Done" : fmt(S.remain);
+    el.miniS.textContent = S.done ? "Block complete" : s.name;
+    updateMini();
+  }
+
+  // Controls
+  function start() {
+    unlockAudio();
+    if (S.done) { resetAll(); }
+    S.running = true;
+    S.endAt = Date.now() + S.remain;
+    holdWake();
+    save(); render();
+  }
+  function pause() {
+    S.remain = Math.max(0, S.endAt - Date.now());
+    S.running = false;
+    releaseWake();
+    save(); render();
+  }
+  function jump(i) {
+    S.done = false;
+    S.idx = i;
+    S.remain = stepMs(i);
+    if (S.running) S.endAt = Date.now() + S.remain;
+    announce(); save(); render();
+  }
+  function next() {
+    if (S.idx < list().length - 1) { jump(S.idx + 1); }
+    else { S.running = false; S.done = true; S.remain = 0; releaseWake(); announce(); save(); render(); }
+  }
+  function back() {
+    if (S.done) { jump(list().length - 1); return; }
+    var used = stepMs(S.idx) - (S.running ? S.endAt - Date.now() : S.remain);
+    if (used > 5000 || S.idx === 0) jump(S.idx);
+    else jump(S.idx - 1);
+  }
+  function resetAll() {
+    S.idx = 0; S.done = false; S.running = false; S.remain = stepMs(0); S.endAt = 0;
+    releaseWake();
+  }
+  function setLen(l) {
+    if (l === S.len) return;
+    var cur = list()[S.idx].id;
+    S.len = l;
+    var i = list().findIndex(function (s) { return s.id === cur; });
+    S.idx = i < 0 ? 0 : i;
+    S.running = false; S.done = false; S.remain = stepMs(S.idx);
+    releaseWake();
+    save(); render();
+  }
+
+  el.start.addEventListener("click", function () { S.running ? pause() : start(); });
+  el.next.addEventListener("click", function () { unlockAudio(); next(); });
+  el.back.addEventListener("click", back);
+  el.reset.addEventListener("click", function () { resetAll(); announce(); save(); render(); });
+  el.len60.addEventListener("click", function () { setLen(60); });
+  el.len90.addEventListener("click", function () { setLen(90); });
+  el.chime.addEventListener("click", function () { S.sound = !S.sound; unlockAudio(); save(); render(); });
+  el.mini.addEventListener("click", function () { el.tool.scrollIntoView({ behavior: "smooth", block: "start" }); });
+
+  // Mini timer when the tool is off screen
+  var toolVisible = true;
+  function updateMini() {
+    var active = S.running || (!S.done && (S.idx > 0 || S.remain < stepMs(0)));
+    el.mini.hidden = toolVisible || !active;
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      toolVisible = es[0].isIntersecting;
+      updateMini();
+    }, { threshold: 0.05 }).observe(el.tool);
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible" && S.running) { holdWake(); catchUp(false); render(); }
+  });
+
+  setInterval(function () {
+    if (S.running) { catchUp(true); render(); }
+  }, 250);
+
+  // Marking layers
+  var page = document.getElementById("page");
+  Array.prototype.forEach.call(document.querySelectorAll(".layer"), function (b) {
+    b.addEventListener("click", function () {
+      var on = b.getAttribute("aria-pressed") !== "true";
+      b.setAttribute("aria-pressed", on);
+      page.classList.toggle(b.dataset.layer, on);
+    });
+  });
+
+  load();
+  render();
+})();
+</script>
+</body>
+</html>
