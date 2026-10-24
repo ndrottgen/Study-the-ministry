@@ -10,24 +10,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="site.css">
 <style>
-/* Prophecy page: ingredients, a week of notes gathered into a harvest, a builder with a three-minute meter, and a checklist. */
+/* Prophecy page: ingredients, a builder with a three-minute meter, practice, delivery, and a checklist. The week of preparation lives on the Lord's Day page. */
 .ing { border-top: 4px solid var(--c); }
 .ing.w { --c: var(--study); }
 .ing.s { --c: var(--priestly); }
 .ing.v { --c: var(--scribal); }
-
-.harvest { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) 1.6fr; gap: 6px; align-items: stretch; }
-.hday { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 6px; text-align: center; min-width: 0; }
-.hday b { display: block; font-size: 13px; }
-.hday i { display: block; width: 22px; height: 26px; margin: 8px auto 0; border-radius: 3px; background: var(--hl-y); border: 1px solid var(--rule); }
-.hday.end { border-color: var(--scribal); text-align: left; padding: 10px 12px; }
-.hday.end span { display: block; font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.35; }
-.stack { display: flex; gap: 3px; margin-top: 8px; }
-.stack i { width: 12px; height: 16px; border-radius: 2px; background: var(--hl-y); border: 1px solid var(--rule); }
-@media (max-width: 560px) {
-  .harvest { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .hday.end { grid-column: 1 / -1; }
-}
 
 .shape { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 .shape .card p.say { font-family: var(--font-display); font-style: italic; font-size: 16px; margin-top: 6px; color: var(--muted); }
@@ -72,6 +59,7 @@
       <li><a href="class-notes.html">Class Notes</a></li>
       <li><a href="outlines.html">Outlines</a></li>
       <li><a href="prophecy.html" aria-current="page">Prophecy</a></li>
+      <li><a href="lords-day.html">Lord’s Day</a></li>
     </ul>
   </nav>
 
@@ -80,7 +68,6 @@
     <p class="lede">To prophesy is to speak for Christ, speak forth Christ, and speak Christ into others for the building up of the church.</p>
     <nav class="jump" aria-label="Sections">
       <a href="#ingredients">Ingredients</a>
-      <a href="#week">During the week</a>
       <a href="#compose">Compose</a>
       <a href="#practice">Practice</a>
       <a href="#meeting">In the meeting</a>
@@ -99,30 +86,9 @@
     <p class="note"><b>Every believer can prophesy, and should.</b> Don’t hold back because you feel short in experience. If you speak the truth faithfully, the Lord can bring you into its reality.</p>
   </section>
 
-  <section id="week">
-    <h2>During the week</h2>
-    <p class="section-lede">A prophecy comes from labor on Christ through the week, not from hoping something comes to you in the meeting.</p>
-    <div class="harvest" aria-label="One note a day gathered into a harvest at the end of the week">
-      <div class="hday"><b>Mon</b><i></i></div>
-      <div class="hday"><b>Tue</b><i></i></div>
-      <div class="hday"><b>Wed</b><i></i></div>
-      <div class="hday"><b>Thu</b><i></i></div>
-      <div class="hday"><b>Fri</b><i></i></div>
-      <div class="hday"><b>Sat</b><i></i></div>
-      <div class="hday end"><b>Your harvest</b><div class="stack"><i></i><i></i><i></i><i></i><i></i><i></i></div><span>Gather the week’s notes. Now you don’t have to wonder what to speak.</span></div>
-    </div>
-    <ul class="rows" style="margin-top:18px">
-      <li><b>Each morning, enjoy the Lord in the Word.</b><span>Write one short note of what touched you, what you saw, or what you enjoyed.</span></li>
-      <li><b>Don’t be picky with the Word.</b><span>Take what the Lord gives you and feed on it.</span></li>
-      <li><b>Muse on it.</b><span>Pray it back, turn it over, and carry it through the day. Don’t pass on food you haven’t digested.</span></li>
-      <li><b>Use the ministry helps.</b><span>The footnotes and the Life-studies open the verses for you.</span></li>
-    </ul>
-    <p class="note"><b>Come to the Lord fresh.</b> You can’t rely on yesterday’s revelation, even for the same words. Prayer comes first, then the speaking.</p>
-  </section>
-
   <section id="compose">
     <h2>Compose it</h2>
-    <p class="section-lede">One burden, one main point, under three minutes.</p>
+    <p class="section-lede">One burden, one main point, under three minutes. Start from the notes you gathered through the week on the <a href="lords-day.html#morning">Lord’s Day</a> page.</p>
     <div class="shape">
       <div class="card"><span class="stepnum">1</span><h4>Burden</h4><p class="say">“This week I was impressed that…”</p></div>
       <div class="card"><span class="stepnum">2</span><h4>Main point</h4><p class="muted">The governing point, with the verse it stands on.</p></div>
@@ -165,7 +131,7 @@
 
   <section id="meeting">
     <h2>In the meeting</h2>
-    <p class="section-lede">Before you stand, pray yourself into the burden. Don’t let other things occupy you that day.</p>
+    <p class="section-lede">Before you stand, pray yourself into the burden.</p>
     <div class="doavoid">
       <div class="card do"><h4>Do</h4>
         <ul>
@@ -193,12 +159,6 @@
     <h2>Before you stand up</h2>
     <p class="section-lede">Run through this before the meeting. <span class="progress" id="progress"></span></p>
     <div class="clist" id="clist">
-      <div class="card"><h4>During the week</h4><ul class="ticks">
-        <li><label><input type="checkbox" id="c1"> I’ve been in the Word daily.</label></li>
-        <li><label><input type="checkbox" id="c2"> I’ve prayed over what I read.</label></li>
-        <li><label><input type="checkbox" id="c3"> I’ve written down light and enjoyment.</label></li>
-        <li><label><input type="checkbox" id="c4"> I’ve gathered my notes.</label></li>
-      </ul></div>
       <div class="card"><h4>In preparation</h4><ul class="ticks">
         <li><label><input type="checkbox" id="c5"> One main point, with supporting points.</label></li>
         <li><label><input type="checkbox" id="c6"> Specific verses.</label></li>
@@ -221,7 +181,7 @@
 
   <div class="pagefoot">
     <a href="outlines.html">← Outlines</a>
-    <a href="index.html">Study Block →</a>
+    <a href="lords-day.html">Lord’s Day →</a>
   </div>
 </div>
 

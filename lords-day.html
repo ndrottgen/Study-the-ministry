@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lord’s Day Prophesying</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+/* Lord's Day page: a week that ends in a meeting. Four steps, six morning notes gathered into a harvest, and a checklist for the morning of. */
+.rhythm { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.rhythm .card { border-top: 4px solid var(--c); }
+.rhythm .when { display: block; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--c); margin-bottom: 6px; }
+.rhythm h4 a { text-decoration: none; }
+.rhythm h4 a:hover { text-decoration: underline; }
+.r-lord { --c: var(--priestly); }
+.r-morn { --c: var(--study); }
+.r-sat { --c: var(--scribal); }
+@media (max-width: 680px) { .rhythm { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 420px) { .rhythm { grid-template-columns: 1fr; } }
+
+.harvest { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 560px) { .harvest { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 360px) { .harvest { grid-template-columns: 1fr; } }
+.hday { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 10px; display: grid; gap: 8px; min-width: 0; align-content: start; }
+.hday.today { border-color: var(--priestly); box-shadow: 0 0 0 1px var(--priestly); }
+.hday .hd { display: flex; align-items: center; gap: 8px; }
+.hday label { font-weight: 700; font-size: 14px; }
+.todaytag { margin-left: auto; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--priestly); }
+.chip { width: 13px; height: 17px; border-radius: 3px; border: 1px solid var(--rule); flex: none; }
+.chip.on { background: var(--hl-y); }
+.hday textarea { width: 100%; min-height: 88px; resize: vertical; font: 400 15px/1.45 var(--font-body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; }
+
+.hsum { margin-top: 10px; background: var(--sheet); border: 1px solid var(--scribal); border-radius: 10px; padding: 12px 14px; display: grid; gap: 12px; }
+.hsum .top { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; }
+.hsum .stack { display: flex; gap: 3px; }
+.hsum .count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.brow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.copied { font-size: 14px; color: var(--study); font-weight: 600; }
+
+.rows a { color: var(--ink); }
+
+.clist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 560px) { .clist { grid-template-columns: 1fr; } }
+.clist .card h4 { font-size: 17px; }
+.progress { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.burdenline { margin-top: 26px; font-family: var(--font-display); font-style: italic; font-size: 22px; line-height: 1.35; max-width: 36ch; text-wrap: balance; }
+.sources { margin-top: 28px; font-size: 13px; color: var(--muted); max-width: 62ch; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="site-nav" aria-label="Site">
+    <a class="brand" href="index.html">Studying the Ministry</a>
+    <ul>
+      <li><a href="index.html">Study Block</a></li>
+      <li><a href="class-notes.html">Class Notes</a></li>
+      <li><a href="outlines.html">Outlines</a></li>
+      <li><a href="prophecy.html">Prophecy</a></li>
+      <li><a href="lords-day.html" aria-current="page">Lord’s Day</a></li>
+    </ul>
+  </nav>
+
+  <header>
+    <h1>Lord’s Day Prophesying</h1>
+    <p class="lede">The prophesying meeting is the harvest of a week with the Lord. Enjoy Him each morning, gather what you received, and come to the meeting with something to speak for the building up of the church.</p>
+    <nav class="jump" aria-label="Sections">
+      <a href="#week">The week</a>
+      <a href="#morning">Each morning</a>
+      <a href="#saturday">Saturday night</a>
+      <a href="#lordsday">Lord’s Day morning</a>
+      <a href="#meeting">The meeting</a>
+      <a href="#checklist">Checklist</a>
+    </nav>
+  </header>
+
+  <section id="week">
+    <h2>The week in four steps</h2>
+    <p class="section-lede">A prophecy comes from labor on Christ through the week, not from hoping something comes to you in the meeting.</p>
+    <div class="rhythm">
+      <div class="card r-lord"><span class="stepnum">1</span><span class="when">Lord’s Day afternoon</span><h4>Look ahead</h4><p class="muted">Make a quick pass through the coming week’s outline to see what the week is about.</p></div>
+      <div class="card r-morn"><span class="stepnum">2</span><span class="when">Mon–Sat mornings</span><h4><a href="#morning">Enjoy and note</a></h4><p class="muted">Pray over a small portion, then write one short note of what you received.</p></div>
+      <div class="card r-sat"><span class="stepnum">3</span><span class="when">Saturday night</span><h4><a href="#saturday">Gather and compose</a></h4><p class="muted">Put the six notes together, compose one short prophecy, and practice it at home.</p></div>
+      <div class="card r-lord"><span class="stepnum">4</span><span class="when">Lord’s Day</span><h4><a href="#lordsday">Prepare and bring it</a></h4><p class="muted">Pray yourself ready at home, then come to the meeting with something to offer.</p></div>
+    </div>
+    <p class="note"><b>Like bringing produce to the feast.</b> Israel labored on the good land and never came to the feasts empty-handed. We labor on Christ through the week and bring Him to the meeting, to offer to God and enjoy with the saints.</p>
+    <p class="note"><b>Behind the routine is a living.</b> Be revived every morning, overcome every day, deal with sins as they come up, and stay filled with the Spirit. Without that, even true light becomes empty talk.</p>
+  </section>
+
+  <section id="morning">
+    <h2>Each morning</h2>
+    <p class="section-lede">Enjoy the Lord in a small portion of the Word, then write down what you received.</p>
+    <ul class="rows">
+      <li><b>Keep the portion small.</b><span>Ten verses or fewer is enough. Concentrate on the two or three that touch you.</span></li>
+      <li><b>Pray, study, recite, prophesy.</b><span>Pray over the portion to touch your spirit, connect its points to verses, say back the line that caught you, and practice speaking it.</span></li>
+      <li><b>Don’t be picky with the Word.</b><span>Take what the Lord gives you and feed on it.</span></li>
+      <li><b>Use the ministry helps.</b><span>The footnotes and the Life-studies open the verses for you.</span></li>
+      <li><b>Muse on it.</b><span>Pray it back, turn it over, and carry it through the day. Don’t pass on food you haven’t digested.</span></li>
+      <li><b>Speak it during the week.</b><span>Tell the Lord what you enjoyed, and share it with a saint. Speaking it is part of how it becomes yours.</span></li>
+      <li><b>Write one short note.</b><span>What touched you, what you saw, or what you enjoyed. A few words are enough to remind you.</span></li>
+    </ul>
+
+    <h3>This week’s notes</h3>
+    <div class="harvest" id="harvest">
+      <div class="hday" data-day="1"><div class="hd"><i class="chip"></i><label for="n1">Monday</label><span class="todaytag" hidden>Today</span></div><textarea id="n1" placeholder="What touched you this morning?"></textarea></div>
+      <div class="hday" data-day="2"><div class="hd"><i class="chip"></i><label for="n2">Tuesday</label><span class="todaytag" hidden>Today</span></div><textarea id="n2" placeholder="What touched you this morning?"></textarea></div>
+      <div class="hday" data-day="3"><div class="hd"><i class="chip"></i><label for="n3">Wednesday</label><span class="todaytag" hidden>Today</span></div><textarea id="n3" placeholder="What touched you this morning?"></textarea></div>
+      <div class="hday" data-day="4"><div class="hd"><i class="chip"></i><label for="n4">Thursday</label><span class="todaytag" hidden>Today</span></div><textarea id="n4" placeholder="What touched you this morning?"></textarea></div>
+      <div class="hday" data-day="5"><div class="hd"><i class="chip"></i><label for="n5">Friday</label><span class="todaytag" hidden>Today</span></div><textarea id="n5" placeholder="What touched you this morning?"></textarea></div>
+      <div class="hday" data-day="6"><div class="hd"><i class="chip"></i><label for="n6">Saturday</label><span class="todaytag" hidden>Today</span></div><textarea id="n6" placeholder="What touched you this morning?"></textarea></div>
+    </div>
+    <div class="hsum">
+      <div class="top"><b>Your harvest</b><span class="stack" id="stack" aria-hidden="true"><i class="chip"></i><i class="chip"></i><i class="chip"></i><i class="chip"></i><i class="chip"></i><i class="chip"></i></span><span class="count" id="count">0 of 6 mornings</span></div>
+      <div class="brow">
+        <button type="button" class="btn primary" id="copyNotes">Copy the week’s notes</button>
+        <button type="button" class="btn" id="newWeek">Start a new week</button>
+        <span class="copied" id="copied" hidden></span>
+      </div>
+    </div>
+    <p class="note">Notes stay in this browser on this device.</p>
+    <p class="note"><b>Come to the Lord fresh.</b> You can’t rely on yesterday’s revelation, even for the same words. Prayer comes first, then the speaking.</p>
+  </section>
+
+  <section id="saturday">
+    <h2>Saturday night</h2>
+    <p class="section-lede">Gather the harvest. Now you don’t have to wonder what to speak.</p>
+    <ul class="rows">
+      <li><b>Read the six notes together.</b><span>Look for what runs through them. The week’s outline gives you a bird’s-eye view.</span></li>
+      <li><b>Find the burden.</b><span>Ask what the Lord has been speaking to you, and to the saints, this week. Then pray according to it.</span></li>
+      <li><b>Compose one main point.</b><span>Under three minutes, standing on a verse. <a href="prophecy.html#compose">Use the builder on the Prophecy page.</a></span></li>
+      <li><b>Practice it at home.</b><span>Speak it out loud and check the length. <a href="prophecy.html#practice">See Practice.</a></span></li>
+    </ul>
+    <p class="note"><b>The Lord gives the light and the burden.</b> Your part is to find words that fit it. That labor is how we learn to prophesy.</p>
+  </section>
+
+  <section id="lordsday">
+    <h2>Lord’s Day morning</h2>
+    <p class="section-lede">Prepare your whole being for the meeting, not only your notes.</p>
+    <ul class="rows">
+      <li><b>Pray five to ten minutes before you go.</b><span>Confess anything between you and the Lord and enjoy His filling. Don’t pray so long that your spirit is tired before the meeting starts.</span></li>
+      <li><b>Guard the morning.</b><span>Don’t let other things occupy you that day, even spiritual things. Avoid friction with anyone, and hold off on calls and mail.</span></li>
+      <li><b>Start the meeting at home.</b><span>Call on the Lord, pray, sing, and praise on the way.</span></li>
+      <li><b>Go to speak.</b><span>Come with the decision to function, like an athlete ready to play, not a spectator.</span></li>
+    </ul>
+  </section>
+
+  <section id="meeting">
+    <h2>In the prophesying meeting</h2>
+    <p class="section-lede">The meeting is a feast of Christ with many dishes. It doesn’t need a set subject.</p>
+    <ul class="rows">
+      <li><b>The goal is to exhibit Christ.</b><span>The purpose is to build up the saints for the building up of the Body. Bring what enlightens, nourishes, and builds up.</span></li>
+      <li><b>Care for the order.</b><span>If your portion fits later, wait for that time. When many speak in a good order, the meeting is like one composed message.</span></li>
+      <li><b>Leave room for others.</b><span>Wait for others to finish, and keep to three minutes so that many can speak (1 Cor. 14:31).</span></li>
+      <li><b>You still came having something.</b><span>Even if there’s no time for you to speak, you were exercised and ready (1 Cor. 14:26).</span></li>
+    </ul>
+    <p class="note">For how to speak once you stand up, see <a href="prophecy.html#meeting">In the meeting</a> on the Prophecy page.</p>
+  </section>
+
+  <section id="checklist">
+    <h2>Before you leave home</h2>
+    <p class="section-lede">Run through this on the Lord’s Day morning. <span class="progress" id="progress"></span></p>
+    <div class="clist" id="clist">
+      <div class="card"><h4>During the week</h4><ul class="ticks">
+        <li><label><input type="checkbox" id="w1"> I’ve been in the Word daily.</label></li>
+        <li><label><input type="checkbox" id="w2"> I’ve prayed over what I read.</label></li>
+        <li><label><input type="checkbox" id="w3"> I’ve written down light and enjoyment.</label></li>
+        <li><label><input type="checkbox" id="w4"> I’ve gathered my notes.</label></li>
+      </ul></div>
+      <div class="card"><h4>This morning</h4><ul class="ticks">
+        <li><label><input type="checkbox" id="m1"> I’ve prayed before leaving.</label></li>
+        <li><label><input type="checkbox" id="m2"> I’ve confessed and been filled.</label></li>
+        <li><label><input type="checkbox" id="m3"> I’ve kept clear of distractions.</label></li>
+        <li><label><input type="checkbox" id="m4"> I’m going with something to speak.</label></li>
+      </ul></div>
+    </div>
+    <div class="brow" style="margin-top:12px"><button type="button" class="btn" id="resetChecks">Clear checklist</button></div>
+    <p class="burdenline">Enjoy Christ every morning, gather Him on Saturday, and bring Him every Lord’s Day.</p>
+    <p class="sources">Drawn from the study fellowship notes; Witness Lee, <i>Prophesying in the Church Meetings for the Organic Building Up of the Church as the Body of Christ</i>, Outline Nine; <i>The Excelling Gift for the Building Up of the Church</i> (CWWL, 1988, vol. 4); and agodman.com.</p>
+  </section>
+
+  <div class="pagefoot">
+    <a href="prophecy.html">← Prophecy</a>
+    <a href="index.html">Study Block →</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var NKEY = "stm-lordsday-notes-v1", CKEY = "stm-lordsday-checks-v1";
+  var NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  var $ = function (id) { return document.getElementById(id); };
+  var days = Array.prototype.slice.call(document.querySelectorAll("#harvest .hday"));
+  var notes = days.map(function (d) { return d.querySelector("textarea"); });
+  var stack = Array.prototype.slice.call(document.querySelectorAll("#stack .chip"));
+
+  try {
+    var saved = JSON.parse(localStorage.getItem(NKEY) || "null");
+    if (Array.isArray(saved)) notes.forEach(function (t, i) { t.value = typeof saved[i] === "string" ? saved[i] : ""; });
+  } catch (e) {}
+
+  // Mark today's card (Monday to Saturday).
+  var wd = new Date().getDay();
+  if (wd >= 1 && wd <= 6) {
+    days[wd - 1].classList.add("today");
+    days[wd - 1].querySelector(".todaytag").hidden = false;
+  }
+
+  function tally() {
+    var n = 0;
+    notes.forEach(function (t, i) {
+      var on = t.value.trim() !== "";
+      if (on) n++;
+      days[i].querySelector(".chip").classList.toggle("on", on);
+    });
+    stack.forEach(function (c, i) { c.classList.toggle("on", i < n); });
+    $("count").textContent = n + " of 6 mornings";
+  }
+  function saveNotes() {
+    try { localStorage.setItem(NKEY, JSON.stringify(notes.map(function (t) { return t.value; }))); } catch (e) {}
+  }
+  function say(msg) { $("copied").textContent = msg; $("copied").hidden = false; }
+
+  notes.forEach(function (t) { t.addEventListener("input", function () { $("copied").hidden = true; tally(); saveNotes(); }); });
+
+  $("copyNotes").addEventListener("click", function () {
+    var text = notes.map(function (t, i) { var v = t.value.trim(); return v ? NAMES[i] + ": " + v : ""; }).filter(Boolean).join("\n\n");
+    if (!text) { say("No notes yet."); return; }
+    try {
+      navigator.clipboard.writeText(text).then(function () { say("Copied"); }, function () { say("Couldn’t copy here. Select the notes and copy them yourself."); });
+    } catch (e) { say("Couldn’t copy here. Select the notes and copy them yourself."); }
+  });
+
+  // Two taps to clear, so a week of notes isn't lost by accident.
+  var armed = null, nw = $("newWeek");
+  nw.addEventListener("click", function () {
+    if (!armed) {
+      nw.textContent = "Tap again to clear all six";
+      armed = setTimeout(function () { armed = null; nw.textContent = "Start a new week"; }, 4000);
+      return;
+    }
+    clearTimeout(armed); armed = null; nw.textContent = "Start a new week";
+    notes.forEach(function (t) { t.value = ""; });
+    tally(); saveNotes(); say("Cleared for a new week.");
+  });
+
+  // Checklist
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("#clist input[type=checkbox]"));
+  try {
+    var cs = JSON.parse(localStorage.getItem(CKEY) || "null");
+    if (cs && typeof cs === "object") boxes.forEach(function (b) { b.checked = !!cs[b.id]; });
+  } catch (e) {}
+  function progress() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    $("progress").textContent = n + " of " + boxes.length + " ready.";
+  }
+  function saveChecks() {
+    var o = {}; boxes.forEach(function (b) { o[b.id] = b.checked; });
+    try { localStorage.setItem(CKEY, JSON.stringify(o)); } catch (e) {}
+  }
+  boxes.forEach(function (b) { b.addEventListener("change", function () { progress(); saveChecks(); }); });
+  $("resetChecks").addEventListener("click", function () { boxes.forEach(function (b) { b.checked = false; }); progress(); saveChecks(); });
+
+  tally(); progress();
+})();
+</script>
+</body>
+</html>
