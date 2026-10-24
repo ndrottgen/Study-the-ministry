@@ -59,8 +59,7 @@ a { color: inherit; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Header */
-.eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
-h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(36px, 8vw, 52px); line-height: 1.02; margin: 8px 0 12px; letter-spacing: -.015em; text-wrap: balance; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(36px, 8vw, 52px); line-height: 1.02; margin: 0 0 12px; letter-spacing: -.015em; text-wrap: balance; }
 .lede { color: var(--muted); max-width: 56ch; margin: 0; }
 nav.jump { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
 nav.jump a { font-size: 14px; font-weight: 600; text-decoration: none; padding: 6px 13px; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); }
@@ -268,8 +267,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--priestly); outl
 blockquote { margin: 18px 0 0; font-family: var(--font-display); font-style: italic; font-size: 21px; line-height: 1.35; }
 blockquote cite { display: block; font-style: normal; font-family: var(--font-body); font-size: 13px; color: var(--muted); margin-top: 6px; }
 
-footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--muted); }
-footer ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
 
 /* Floating mini timer */
 .mini { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--sheet); border-radius: 999px; padding: 10px 18px; font: 600 15px var(--font-body); display: flex; gap: 10px; align-items: center; border: 0; cursor: pointer; max-width: calc(100% - 32px); box-shadow: 0 6px 20px rgba(0,0,0,.18); z-index: 20; }
@@ -284,7 +281,6 @@ footer ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
 <body>
 <div class="wrap">
   <header>
-    <div class="eyebrow">FTTA · Truth study</div>
     <h1>The Study Block</h1>
     <p class="lede">One class, one block, one key statement. Set the timer, mark with a purpose, ask the questions that uncover the burden, and capture what you saw before it fades.</p>
     <nav class="jump" aria-label="Sections">
@@ -531,17 +527,6 @@ footer ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
     <blockquote>“The faintest ink is better than the sharpest mind.”<cite>Brother Nee, as shared in the training’s study guidelines</cite></blockquote>
   </section>
 
-  <footer>
-    Drawn from your FTTA dashboard notes:
-    <ul>
-      <li><a href="https://app.notion.com/p/3f03b4dc26b98093b026e6322e3fa2b3" target="_blank" rel="noopener">Practical Guidelines on Studying the Truth in the Training</a></li>
-      <li><a href="https://app.notion.com/p/3ed3b4dc26b9807abcfecd97c405a8dd" target="_blank" rel="noopener">J.B. Study Fellowship</a></li>
-      <li><a href="https://app.notion.com/p/2963b4dc26b980a18f42f364086b7846" target="_blank" rel="noopener">Study Fellowship, Oct 23, 2025</a></li>
-      <li><a href="https://app.notion.com/p/2a43b4dc26b9803a847bc706fffccbcd" target="_blank" rel="noopener">Study Fellowship, Nov 6, 2025</a></li>
-      <li><a href="https://app.notion.com/p/3f03b4dc26b9800f9d25daa796f836d0" target="_blank" rel="noopener">Study Fellowship on Memorizing</a></li>
-      <li><a href="https://app.notion.com/p/3363b4dc26b98009b747c9bfc196d2df" target="_blank" rel="noopener">Mining the Truth &amp; Studying the Ministry</a></li>
-    </ul>
-  </footer>
 </div>
 
 <button type="button" class="mini" id="mini" hidden><span class="t" id="miniT">05:00</span><span class="s" id="miniS">Prepare your being</span></button>
