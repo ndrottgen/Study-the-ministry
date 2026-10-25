@@ -78,6 +78,10 @@ h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: v
 .seg-ctl button { border: 0; background: transparent; font: 600 14px var(--font-body); color: var(--muted); padding: 7px 15px; border-radius: 999px; cursor: pointer; font-variant-numeric: tabular-nums; }
 .seg-ctl button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
 .chime { font: 600 13px var(--font-body); color: var(--muted); background: transparent; border: 0; cursor: pointer; padding: 6px 4px; }
+@media (max-width: 420px) {
+  .tool { padding: 16px; }
+  .seg-ctl button { padding: 7px 11px; }
+}
 
 .bar { display: flex; gap: 3px; height: 16px; margin: 20px 0 10px; }
 .seg { position: relative; border-radius: 3px; overflow: hidden; min-width: 8px; cursor: pointer; border: 0; padding: 0; background: transparent; }
@@ -309,6 +313,7 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
     <div class="tool" id="tool">
       <div class="tool-top">
         <div class="seg-ctl" role="group" aria-label="Block length">
+          <button type="button" id="len30" aria-pressed="false">30 min</button>
           <button type="button" id="len60" aria-pressed="false">60 min</button>
           <button type="button" id="len90" aria-pressed="true">90 min</button>
         </div>
@@ -553,28 +558,28 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
   "use strict";
   var GROUPS = { priestly: "Priestly", study: "Study", scribal: "Scribal" };
   var STEPS = [
-    { id: "prepare", name: "Prepare your being", g: "priestly", m60: 2, m90: 5,
+    { id: "prepare", name: "Prepare your being", g: "priestly", m30: 2, m60: 2, m90: 5,
       act: ["Call on the Lord.", "Confess, then empty and unload yourself, even of good things.", "Pray for a spirit of wisdom and revelation (Eph. 1:17).", "Read the message title slowly and prayerfully."],
       ask: ["What is filling me that I need to unload before I can receive?", "Lord, what do You want to impress on me in this message?"] },
-    { id: "verses", name: "Pray-read key verses", g: "priestly", m60: 5, m90: 7,
+    { id: "verses", name: "Pray-read key verses", g: "priestly", m30: 3, m60: 5, m90: 7,
       act: ["Pray-read one or two key verses for the lesson.", "Write down the word or phrase that touches you."],
       ask: ["What verses does this lesson stand on?", "What is the Lord speaking to me through these words?"] },
-    { id: "survey", name: "Survey the forest", g: "study", m60: 0, m90: 8,
+    { id: "survey", name: "Survey the forest", g: "study", m30: 0, m60: 0, m90: 8,
       act: ["Scan the whole reading from start to end.", "Read the headings and the first and last sentences of each section.", "Don’t mark anything yet."],
       ask: ["What is the title telling me this message is about?", "From the headings, what might the burden be?"] },
-    { id: "aim", name: "Review and aim", g: "study", m60: 5, m90: 5,
+    { id: "aim", name: "Review and aim", g: "study", m30: 2, m60: 5, m90: 5,
       act: ["Skim your class notes and the outline.", "Gauge how much material you need to cover.", "Write three guiding questions."],
       ask: ["In class, what was the brother impressing on us, and why?", "Which part of this topic is least familiar to me?", "What would I need to see to explain this lesson to someone?"] },
-    { id: "read", name: "Active reading", g: "study", m60: 30, m90: 40, pace: true,
+    { id: "read", name: "Active reading", g: "study", m30: 15, m60: 30, m90: 40, pace: true,
       act: ["Read a section through, then go back and mark it.", "Highlight the point in yellow and the proof in blue; underline the explanation.", "Read the footnotes on the verses cited.", "Write a 3–6 word margin label for each section.", "Stop now and then to turn a sentence into prayer."],
       ask: ["Where is this in the Word? Trace it from the ministry down to the verse.", "Is there a jump here? What steps lead from the verse to what the brother saw?", "Is this primary, secondary, or tertiary? Don’t assume the easiest part is the crucial one.", "Is one point holding me too long? Mark it ? and keep moving."] },
-    { id: "review", name: "Review", g: "scribal", m60: 10, m90: 10,
+    { id: "review", name: "Review", g: "scribal", m30: 4, m60: 10, m90: 10,
       act: ["Answer the four review questions in writing.", "Use your margin labels as the main points.", "Now that you’ve seen the whole message, highlight the burden in pink."],
       ask: ["What are the main points, and what are their biblical bases?", "How do the main points relate to one another?", "What was the burden of this lesson?", "What portion enlightened or touched me the most?"] },
-    { id: "produce", name: "Crystallize and produce", g: "scribal", m60: 8, m90: 10,
+    { id: "produce", name: "Crystallize and produce", g: "scribal", m30: 4, m60: 8, m90: 10,
       act: ["Whittle it down: three sentences, then one sentence, then one word or title.", "Write a 3–4 sentence summary, or outline a prophecy on one point that touched you.", "Speak it aloud."],
       ask: ["What one sentence holds everything the Lord showed me?", "What word or title would bring this whole study back?", "What question would lead someone from point A to point B?"] },
-    { id: "birdseye", name: "Bird’s-eye and pray it back", g: "priestly", m60: 0, m90: 5,
+    { id: "birdseye", name: "Bird’s-eye and pray it back", g: "priestly", m30: 0, m60: 0, m90: 5,
       act: ["Reread this class’s earlier key statements.", "Pray today’s key statement back to the Lord.", "Copy today’s statement and title into the class log."],
       ask: ["How does this week connect to the earlier weeks?", "Where does this sit in God’s economy?"] }
   ];
@@ -582,6 +587,7 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
     act: ["Copy today’s key statement and title into this class’s log.", "List any ? items to return to.", "Check whether a lesson summary is due for this class."],
     ask: ["If someone asked me for a 30-second sharing right now, could I give it?"]
   };
+  var LENS = [30, 60, 90];
   var KEY = "ftta-study-block-v1";
   var S = { len: 90, idx: 0, running: false, endAt: 0, remain: null, done: false, sound: true };
 
@@ -595,7 +601,7 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
   function load() {
     try {
       var d = JSON.parse(localStorage.getItem(KEY) || "null");
-      if (d && (d.len === 60 || d.len === 90)) {
+      if (d && LENS.indexOf(d.len) >= 0) {
         S.len = d.len;
         S.idx = Math.min(Math.max(0, d.idx | 0), list().length - 1);
         S.running = !!d.running;
@@ -675,7 +681,7 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
   // Elements
   var $ = function (id) { return document.getElementById(id); };
   var el = {
-    len60: $("len60"), len90: $("len90"), chime: $("chime"), bar: $("bar"),
+    len30: $("len30"), len60: $("len60"), len90: $("len90"), chime: $("chime"), bar: $("bar"),
     stepOf: $("stepOf"), stepGroup: $("stepGroup"), stepName: $("stepName"), clock: $("clock"), overall: $("overall"),
     back: $("back"), start: $("startBtn"), next: $("next"), reset: $("reset"),
     doList: $("doList"), askList: $("askList"), pace: $("pace"), steps: $("steps"), live: $("live"),
@@ -710,6 +716,11 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
       el.bar.appendChild(b);
     });
   }
+  // For a step left out of this length: name the lengths that include it.
+  function offLabel(s) {
+    var inc = LENS.filter(function (l) { return s["m" + l] > 0; });
+    return inc.length === 1 ? inc[0] + "-min block only" : inc.join(" and ") + "-min blocks";
+  }
   function buildSteps() {
     el.steps.textContent = "";
     var L = list();
@@ -725,7 +736,7 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
       b.innerHTML = '<span class="n"></span><span class="nm"></span><span class="mins"></span>';
       b.querySelector(".n").textContent = on ? (i + 1) : "–";
       b.querySelector(".nm").textContent = s.name;
-      b.querySelector(".mins").textContent = on ? s["m" + S.len] + " min" : "90-min block only";
+      b.querySelector(".mins").textContent = on ? s["m" + S.len] + " min" : offLabel(s);
       if (on) b.addEventListener("click", function () { jump(i); });
       li.appendChild(b);
       el.steps.appendChild(li);
@@ -737,6 +748,7 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
     var L = list(), n = L.length, s = L[S.idx];
     if (shownLen !== S.len) {
       buildBar(); buildSteps();
+      el.len30.setAttribute("aria-pressed", S.len === 30);
       el.len60.setAttribute("aria-pressed", S.len === 60);
       el.len90.setAttribute("aria-pressed", S.len === 90);
       shownLen = S.len; shownIdx = -1;
@@ -761,8 +773,8 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
         fillList(el.doList, s.act);
         fillList(el.askList, s.ask);
         if (s.pace) {
-          var half = s["m" + S.len] / 2;
-          el.pace.textContent = "Halfway check: when this step shows " + (half < 10 ? "0" : "") + half + ":00, you should be halfway through the reading.";
+          var half = s["m" + S.len] * 30000;
+          el.pace.textContent = "Halfway check: when this step shows " + fmt(half) + ", you should be halfway through the reading.";
           el.pace.hidden = false;
         } else {
           el.pace.hidden = true;
@@ -852,6 +864,7 @@ blockquote cite { display: block; font-style: normal; font-family: var(--font-bo
   el.next.addEventListener("click", function () { unlockAudio(); next(); });
   el.back.addEventListener("click", back);
   el.reset.addEventListener("click", function () { resetAll(); announce(); save(); render(); });
+  el.len30.addEventListener("click", function () { setLen(30); });
   el.len60.addEventListener("click", function () { setLen(60); });
   el.len90.addEventListener("click", function () { setLen(90); });
   el.chime.addEventListener("click", function () { S.sound = !S.sound; unlockAudio(); save(); render(); });
