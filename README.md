@@ -11,3 +11,9 @@ A small study companion site for class study, built from the training's study gu
 ## Use it
 
 Open `index.html` in any browser. No build step or install needed.
+
+## Offline
+
+After the site is opened once online, every page works offline. `sw.js` saves the pages, styles, and icons, tries the network first so updates show right away, and falls back to the saved copy when there is no connection. On a phone, use Add to Home Screen to open it like an app (`manifest.webmanifest`, `icons/`).
+
+When adding a new page, add it to the `CORE` list in `sw.js` so it is saved for offline use too.
